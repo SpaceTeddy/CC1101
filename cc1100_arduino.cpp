@@ -5,7 +5,7 @@
 '
 '  by
 '
-'  christian weithe
+'  
 '  module contains helper helper code from other people. Thx for that
 '-----------------------------------------------------------------------------*/
 #include <cc1100.h>
