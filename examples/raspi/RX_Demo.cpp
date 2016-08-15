@@ -6,7 +6,6 @@
 
 #include <termios.h>
 #include <sys/select.h>
-//#include <stdexcept>
 #include <iostream>     // std::cin, std::cout, std::hex
 
 #include <getopt.h>
@@ -165,8 +164,8 @@ int main(int argc, char *argv[]) {
 
 	cc1100.begin(My_addr);								//setup cc1000 RF IC
 	cc1100.silde();
-	cc1100.set_ISM(0x03);                    //set frequency
 	cc1100.set_mode(0x04);                   //set modulation mode
+	cc1100.set_ISM(0x03);                    //set frequency
 	cc1100.set_channel(0x01);                //set channel
 	cc1100.set_output_power_level(10);        //set PA level
 	cc1100.set_myaddr(0x05);
