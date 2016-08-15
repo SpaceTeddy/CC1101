@@ -3,12 +3,11 @@
 '                     -------
 '
 '
-'  by
-'
+'  - need PinChangeInt library
+'  - *.eep file must flashed to Arduino first -> use eeprom Tool
 '  
 '  
 '-----------------------------------------------------------------------------*/
-#include <avr/sleep.h>
 #include <cc1100.h>
 #include <PinChangeInt.h>
 
