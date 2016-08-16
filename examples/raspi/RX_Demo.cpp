@@ -124,6 +124,13 @@ int main(int argc, char *argv[]) {
 				cc1100_mode_select = atoi (optarg);
 
 				switch(cc1100_mode_select){
+				case 1:
+					cc1100_mode_select = 1;
+					break;
+				case 38:
+					cc1100_mode_select = 2;
+					break;
+				
 				case 100:
 					cc1100_mode_select = 3;
 					break;
