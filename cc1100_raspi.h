@@ -10,16 +10,10 @@
 #define TRUE  1
 #define FALSE 0
 
-//|=====================[ setting EEPROM addresses]=============================
-#define EEPROM_ADDRESS_CC1100_FREQUENCY	  0x1F4  //ISM band
-#define EEPROM_ADDRESS_CC1100_MODE		  0x1F5  //modulation mode
-#define EEPROM_ADDRESS_CC1100_MY_ADDR	  0x1F6  //receiver address
-#define EEPROM_ADDRESS_CC1100_CHANNEL	  0x1F7  //channel number
-
 //**************************** pins ******************************************//
-#define SCK_PIN  13
-#define MISO_PIN 12
-#define MOSI_PIN 11
+//#define SCK_PIN  13
+//#define MISO_PIN 12
+//#define MOSI_PIN 11
 #define SS_PIN   10
 #define GDO2	  6
 #define GDO0	 99
