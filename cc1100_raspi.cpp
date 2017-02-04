@@ -2,10 +2,10 @@
 '                     CC1100 Raspberry Pi Library
 '                     ---------------------------
 '
-'  
 '
 '
-' 
+'
+'
 '
 '-------------------------------------------------------------------------------*/
 
@@ -51,6 +51,57 @@ static uint8_t cc1100_MSK_500_kb[CFG_REGISTER] = {0x07,0x2E,0x80,0x07,0x57,0x43,
 									  0xF8,0x00,0x07,0x0C,0x18,0x1D,0x1C,0xC7,0x40,0xB2,
 									  0x02,0x26,0x09,0xB6,0x17,0xEA,0x0A,0x00,0x19,0x41,
 									  0x00,0x59,0x7F,0x3F,0x81,0x3F,0x0B};
+
+static uint8_t cc1100_OOK_4_8_kb[CFG_REGISTER] = {
+					0x06,  // IOCFG2        GDO2 Output Pin Configuration
+				  0x2E,  // IOCFG1        GDO1 Output Pin Configuration
+					0x06,  // IOCFG0        GDO0 Output Pin Configuration
+					0x47,  // FIFOTHR       RX FIFO and TX FIFO Thresholds
+					0xD3,  // SYNC1         Sync Word, High Byte
+					0x91,  // SYNC0         Sync Word, Low Byte
+					0xFF,  // PKTLEN        Packet Length
+					0x04,  // PKTCTRL1      Packet Automation Control
+					0x05,  // PKTCTRL0      Packet Automation Control
+					0x00,  // ADDR          Device Address
+					0x00,  // CHANNR        Channel Number
+					0x06,  // FSCTRL1       Frequency Synthesizer Control
+				  0x00,  // FSCTRL0       Frequency Synthesizer Control
+					0x21,  // FREQ2         Frequency Control Word, High Byte
+					0x65,  // FREQ1         Frequency Control Word, Middle Byte
+				  0x6A,  // FREQ0         Frequency Control Word, Low Byte
+					0x87,  // MDMCFG4       Modem Configuration
+					0x83,  // MDMCFG3       Modem Configuration
+					0x3B,  // MDMCFG2       Modem Configuration
+					0x22,  // MDMCFG1       Modem Configuration
+					0xF8,  // MDMCFG0       Modem Configuration
+					0x15,  // DEVIATN       Modem Deviation Setting
+					0x07,  // MCSM2         Main Radio Control State Machine Configuration
+					0x30,  // MCSM1         Main Radio Control State Machine Configuration
+					0x18,  // MCSM0         Main Radio Control State Machine Configuration
+					0x14,  // FOCCFG        Frequency Offset Compensation Configuration
+					0x6C,  // BSCFG         Bit Synchronization Configuration
+					0x07,  // AGCCTRL2      AGC Control
+					0x00,  // AGCCTRL1      AGC Control
+					0x92,  // AGCCTRL0      AGC Control
+					0x87,  // WOREVT1       High Byte Event0 Timeout
+					0x6B,  // WOREVT0       Low Byte Event0 Timeout
+					0xFB,  // WORCTRL       Wake On Radio Control
+					0x56,  // FREND1        Front End RX Configuration
+					0x17,  // FREND0        Front End TX Configuration
+					0xE9,  // FSCAL3        Frequency Synthesizer Calibration
+					0x2A,  // FSCAL2        Frequency Synthesizer Calibration
+					0x00,  // FSCAL1        Frequency Synthesizer Calibration
+					0x1F,  // FSCAL0        Frequency Synthesizer Calibration
+					0x41,  // RCCTRL1       RC Oscillator Configuration
+					0x00,  // RCCTRL0       RC Oscillator Configuration
+					0x59,  // FSTEST        Frequency Synthesizer Calibration Control
+				  0x7F,  // PTEST         Production Test
+					0x3F,  // AGCTEST       AGC Test
+					0x81,  // TEST2         Various Test Settings
+					0x35,  // TEST1         Various Test Settings
+					0x09,  // TEST0         Various Test Settings
+				};
+
 
 static uint8_t patable_power_315[8] = {0x17,0x1D,0x26,0x69,0x51,0x86,0xCC,0xC3};
 static uint8_t patable_power_433[8] = {0x6C,0x1C,0x06,0x3A,0x51,0x85,0xC8,0xC0};
@@ -105,36 +156,34 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
 
 
 	pinMode(GDO2, INPUT);
-	//pinMode(RX_LED, OUTPUT);
-	//pinMode(TX_LED, OUTPUT);
-	
+
 	if (cc1100_debug == 1) {
 		printf("Init CC1100...\r\n");
 	}
-	
+
 	spi_begin();
 	reset();										           //CC1100 reset
 
 	spi_write_strobe(SFTX);delayMicroseconds(100); //flush the TX_fifo content
 	spi_write_strobe(SFRX);delayMicroseconds(100); //flush the RX_fifo content
-	
+
 	partnum = spi_read_register(PARTNUM);
 	version = spi_read_register(VERSION);
-	
+
 	if(version == 0x00 || version == 0xFF)
 		{
 			if (cc1100_debug == 1) {
 				printf("no CC11xx found!\r\n");
 			}
-			
+
 			return FALSE;
 		}
-	
+
 	if (cc1100_debug == 1) {
 		printf("Partnumber: 0x%02X\r\n", partnum);
 		printf("Version   : 0x%02X\r\n", version);
 	}
-	
+
 	//set modulation mode
 	set_mode(cc1100_mode_select);
 
@@ -151,16 +200,16 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
 	set_myaddr(My_addr);						    //My_Addr from EEPROM to global variable
 
 
-	cc1100_show_register_settings();
+	//cc1100_show_register_settings();
 	//show_main_settings();
 
 	if (cc1100_debug == 1) {
 		printf("...done!\r\n");
 	}
-	
+
 	receive();									//set CC1100 in receive mode
 	return TRUE;
-	}	
+	}
 
 //-----------------[finish's the CC1100 operation]------------------------------
 void CC1100::end(void)
@@ -176,23 +225,23 @@ void CC1100::show_register_settings(void)
 
 		spi_read_burst(READ_BURST,config_reg_verify,CFG_REGISTER);	//reads all 47 config register from cc1100	"359.63us"
 		spi_read_burst(PATABLE_BURST,Patable_verify,8);				//reads output power settings from cc1100	"104us"
-	
+
 		show_main_settings();
 
 		printf("Config Register:\r\n");
-	
+
 		for(uint8_t i = 0 ; i < CFG_REGISTER; i++) 		           //showes rx_buffer for debug
 			{
 				printf("0x%02X ", config_reg_verify[i]);
 
 				if(i==9 || i==19 || i==29 || i==39)			       //just for beautiful output style
-					{	
-					printf("\r\n");
+					{
+						printf("\r\n");
 					}
 			}
 			printf("\r\n");
 			printf("PaTable:\r\n");
-	
+
 			for(uint8_t i = 0 ; i < 8; i++) 					   //showes rx_buffer for debug
 				{
 				printf("0x%02X ", Patable_verify[i]);
@@ -305,13 +354,13 @@ void CC1100::receive(void)
 	silde();			                             //sets to idle first.
 	spi_write_strobe(SRX);									//writes receive strobe (receive mode)
 	marcstate = 0xFF;									//set unknown/dummy state value
-	
+
 	while(marcstate != 0x0D)							//0x0D = RX 
 	{
 		marcstate = (spi_read_register(MARCSTATE) & 0x1F);		//read out state of
 		//printf("Marcstate: 0x%02X\r", marcstate);
 	}
-}	
+}
 //----------------------[end]---------------------------------------
 
 //----------------[tx_payload_burst]--------------------------------
@@ -322,7 +371,7 @@ void CC1100::tx_payload_burst(uint8_t my_addr,uint8_t rx_addr, uint8_t *txbuffer
 	txbuffer[2] = my_addr;
 
 	spi_write_burst(TXFIFO_BURST,txbuffer,length);		//writes TX_Buffer +1 because of pktlen must be also transfered
-	
+
 	if (cc1100_debug == 1) {
 		printf("TX_FIFO: ");
 		for(uint8_t i = 0 ; i < length; i++) 			//TX_fifo debug out
@@ -338,7 +387,7 @@ void CC1100::tx_payload_burst(uint8_t my_addr,uint8_t rx_addr, uint8_t *txbuffer
 //------------[rx_payload_burst - package received]-----------------
 void CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
 	{
-	
+
 	uint8_t bytes_in_RXFIFO = spi_read_register(RXBYTES); //reads the number of bytes in RXFIFO
 
 	if (bytes_in_RXFIFO & 0x7F && !(bytes_in_RXFIFO & 0x80))
@@ -423,7 +472,7 @@ void CC1100::sent_acknolage(uint8_t my_addr, uint8_t tx_addr)
 	transmit();																						//sent package over the air
 	receive();																						//set CC1100 in receive mode
 
-	
+
 	if (cc1100_debug == 1) {
 		printf("Ack_sent!\r\n");
 	}
@@ -546,11 +595,15 @@ void CC1100::set_mode(uint8_t mode)
 		case 0x05:
 					spi_write_burst(WRITE_BURST,cc1100_MSK_500_kb,CFG_REGISTER);			//sets up settings for GFSK 38,4 kbit mode/speed
 					break;
+		case 0x06:
+                                        spi_write_burst(WRITE_BURST,cc1100_OOK_4_8_kb,CFG_REGISTER);                    //sets up settings for GFSK 38,4 kbit mode/speed
+                                        break;
+
 		default:
 					spi_write_burst(WRITE_BURST,cc1100_GFSK_100_kb,CFG_REGISTER);			//sets up settings for GFSK 100 kbit mode/speed
 					break;
 	}
-	
+
 	return;
 }
 //----------------------[end]--------------------------------
@@ -559,11 +612,11 @@ void CC1100::set_mode(uint8_t mode)
 void CC1100::set_ISM(uint8_t ism_freq)
 {
 	uint8_t freq2, freq1, freq0;
-	
+
 	switch (ism_freq) 														//loads the RF freq which is defined in cc1100_freq_select
 	{
 		case 0x01:															//315MHz
-					freq2=0x0C;			
+					freq2=0x0C;
 					freq1=0x1D;
 					freq0=0x89;
 					spi_write_burst(PATABLE_BURST,patable_power_315,8);
