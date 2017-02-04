@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include <unistd.h>
 
 #include <termios.h>
 #include <sys/select.h>
@@ -13,7 +15,7 @@
 #include <wiringPiSPI.h>
 
 #define PACKAGE    "CC1100 SW"
-#define VERSION_SW    "0.0.1"
+#define VERSION_SW    "1.0.0"
 
 struct termios orig_termios;
 
@@ -43,7 +45,7 @@ void print_help(int exval) {
 	//printf("  -r rx address [1-255] 	  	set my address\r\n\r\n");
 	printf("  -c channel 	[1-255] 		set transmit channel\r\n");
 	printf("  -f frequency  [315,434,868,915]  	set ISM band\r\n\r\n");
-	printf("  -m modulation [100,250,500] 		set modulation\r\n\r\n");
+	printf("  -m modulation [4,38,100,250,500] 	set modulation\r\n\r\n");
 
 	exit(exval);
 }
@@ -71,8 +73,29 @@ void set_conio_terminal_mode()
     //setvbuf(stdout, (char *)NULL, _IOLBF, 0);		//enable printf() buffer
 }
 
+int kbhit()
+{
+    struct timeval tv = { 0L, 0L };
+    fd_set fds;
+    FD_ZERO(&fds); // not in original posting to stackoverflow
+    FD_SET(0, &fds);
+    return select(1, &fds, NULL, NULL, &tv);
+}
+
+int getch()
+{
+    int r;
+    unsigned char c;
+    if ((r = read(0, &c, sizeof(c))) < 0) {
+        return r;
+    } else {
+        return c;
+    }
+}
+
 //|============================ Main ============================|
 int main(int argc, char *argv[]) {
+
 	//------------- command line option parser -------------------
 	int opt;
 	// no arguments given
@@ -130,7 +153,7 @@ int main(int argc, char *argv[]) {
 				case 38:
 					cc1100_mode_select = 2;
 					break;
-				
+
 				case 100:
 					cc1100_mode_select = 3;
 					break;
@@ -140,6 +163,10 @@ int main(int argc, char *argv[]) {
 				case 500:
 					cc1100_mode_select = 5;
 					break;
+				case 4:
+                                        cc1100_mode_select = 6;
+                                        break;
+
 				}
 				break;
 				case ':':
@@ -165,6 +192,7 @@ int main(int argc, char *argv[]) {
 	}else if(quite_mode == 0){
 		cc1100_debug = 1;
 	}
+
 	set_conio_terminal_mode();							//setup console input/output
 
 	wiringPiSetup();									//setup wiringPi library
@@ -179,16 +207,29 @@ int main(int argc, char *argv[]) {
 	//cc1100.spi_write_register(IOCFG2, 0x06); //set module in sync mode detection mode
 	cc1100.receive();
 
-	cc1100.show_main_settings();             //shows setting debug messages to UART
-
+	//cc1100.show_main_settings();             //shows setting debug messages to UART
+	cc1100.show_register_settings();
 	//------------------------- Main Loop ------------------------
+	printf("waiting for incomming package...\n");
+
 	for (;;) {
-		delay(1);                            //delay to reduce system load
-		
+
+		if(kbhit()) // Nur wenn auch eine Taste gedrückt ist
+    			{
+        			char c = getch(); // Muss auf keine Eingabe warten, Taste ist bereits gedrückt 
+        			switch(c){
+            			case 'q':
+					printf("\nExit\n");
+					exit(0);
+        			}
+    			}
+
+		delay(1);                                //delay to reduce system load
+
 		if (cc1100.packet_available())		 //checks if a packed is available
 		{
 		  cc1100.get_payload(Rx_fifo, pktlen, rx_addr, sender, rssi_dbm, lqi); //stores the payload data to Rx_fifo
-			cc1101_packet_available = TRUE;							//ready for next packet
+		  cc1101_packet_available = TRUE;							//ready for next packet
 		}
 	}
 	return 0;
