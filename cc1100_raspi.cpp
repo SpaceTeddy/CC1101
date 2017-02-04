@@ -9,7 +9,7 @@
 '
 '-------------------------------------------------------------------------------*/
 
-#include <cc1100.h>
+#include "cc1100.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -17,7 +17,7 @@
 #include <wiringPiSPI.h>
 
 
-//CC1100 cc1100;
+CC1100 cc1100;
 
 extern uint8_t cc1100_debug;
 //-------------------[global default settings 868 Mhz]---------------------------------
@@ -151,7 +151,7 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
 	set_myaddr(My_addr);						    //My_Addr from EEPROM to global variable
 
 
-	//cc1100_show_register_settings();
+	cc1100_show_register_settings();
 	//show_main_settings();
 
 	if (cc1100_debug == 1) {
