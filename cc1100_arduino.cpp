@@ -8,7 +8,7 @@
 '  
 '  module contains helper helper code from other people. Thx for that
 '-----------------------------------------------------------------------------*/
-#include <cc1100.h>
+#include "cc1100_arduino.h"
 
 //CC1100 cc1100;
 
