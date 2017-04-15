@@ -35,3 +35,34 @@ SCLK   -    SCK  (P1-23)<br />
 GDO2   -    free GPIO (P1-22) <br />
 GDO0   -    not used in this demo<br />
 GND    -    P1-25<br />
+
+How to compile Raspi Demos:
+===========================
+copy RX_Demo.cpp, TX_Demo.cpp, cc1100.cpp, cc1100.h in the same directory and compile <br />
+
+RX_Demo.cpp<br />
+sudo g++ -lwiringPi RX_Demo.cpp cc1100.cpp -o RX_Demo<br />
+sudo chmod 755 RX_Demo<br />
+<br />
+TX_Demo.cpp<br />
+sudo g++ -lwiringPi TX_Demo.cpp cc1100.cpp -o TX_Demo<br />
+sudo chmod 755 TX_Demo<br />
+<br />
+Command Line parameters:<br />
+========================<br />
+CC1100 SW [-h] [-V] [-q] [-a My_Addr] [-r Rx_Addr] [-c channel] [-f frequency]<br />
+          [-m modulation]<br />
+<br />
+  -h              			print this help and exit<br />
+  -V              			print version and exit<br />
+  -v              			set verbose flag<br />
+  -q              			set quite mode flag<br />
+  -a my address [1-255] 		set my address<br />
+  -c channel 	[1-255] 		set transmit channel<br />
+  -f frequency  [315,434,868,915]  	set ISM band<br />
+  -m modulation [100,250,500] 		set modulation<br />
+  
+  Example,<br />
+  sudo ./TX_demo -a1 -c1 -f868 -m250<br />
+  sudo ./RX_demo -a1 -c1 -f868 -m250<br />
+ 
