@@ -1,9 +1,10 @@
 CC1101
 ======
 
-driver library for Ti CC1100 / CC1101. \n
-Contains Lib for Arduino and Raspberry Pi. 
-Note: Raspi need wiringPi 
+driver library for Ti CC1100 / CC1101.<br />
+Contains Lib for Arduino and Raspberry Pi.<br />
+Note: Raspi need wiringPi<br />
+
 
 
 Hardware connection:
