@@ -19,12 +19,12 @@
 #define GDO0	 99
 
 /*----------------------[CC1100 - misc]---------------------------------------*/
-#define CFG_REGISTER  	          0x2F	//47 registers
+#define CFG_REGISTER  	                  0x2F	//47 registers
 #define FIFOBUFFER		          0x42  //size of Fifo Buffer
 #define RSSI_OFFSET_868MHZ		  0x4E	//dec = 74
 #define TX_RETRIES_MAX			  0x05	//tx_retries_max
-#define ACK_TIMEOUT				  100	//ACK timeout in ms
-#define CC1100_COMPARE_REGISTER   0x00	//register compare 0=no compare 1=compare
+#define ACK_TIMEOUT		          100	//ACK timeout in ms
+#define CC1100_COMPARE_REGISTER           0x00	//register compare 0=no compare 1=compare
 #define BROADCAST_ADDRESS 		  0x00	//broadcast address
 #define CC1100_FREQ_315MHZ		  0x01
 #define CC1100_FREQ_434MHZ		  0x02
@@ -36,18 +36,18 @@
 
 /*---------------------------[CC1100 - R/W offsets]---------------------------*/
 #define WRITE_SINGLE_BYTE	0x00
-#define WRITE_BURST  	    0x40
-#define READ_SINGLE_BYTE    0x80
+#define WRITE_BURST  	        0x40
+#define READ_SINGLE_BYTE        0x80
 #define READ_BURST  		0xC0
 /*---------------------------[END R/W offsets]--------------------------------*/
 
 /*------------------------[CC1100 - FIFO commands]----------------------------*/
 #define TXFIFO_BURST  		0x7F    //write burst only
-#define TXFIFO_SINGLE_BYTE  0x3F    //write single only
+#define TXFIFO_SINGLE_BYTE      0x3F    //write single only
 #define RXFIFO_BURST  		0xFF    //read burst only
-#define RXFIFO_SINGLE_BYTE  0xBF    //read single only
+#define RXFIFO_SINGLE_BYTE      0xBF    //read single only
 #define PATABLE_BURST  		0x7E    //power control read/write
-#define PATABLE_SINGLE_BYTE 0xFE    //power control read/write
+#define PATABLE_SINGLE_BYTE     0xFE    //power control read/write
 /*---------------------------[END FIFO commands]------------------------------*/
 
 /*----------------------[CC1100 - config register]----------------------------*/
@@ -121,17 +121,17 @@
 #define PARTNUM 	   0xF0		// Part number
 #define VERSION 	   0xF1		// Current version number
 #define FREQEST 	   0xF2		// Frequency offset estimate
-#define LQI 		   0xF3	    // Demodulator estimate for link quality
+#define LQI 		   0xF3	        // Demodulator estimate for link quality
 #define RSSI 		   0xF4		// Received signal strength indication
 #define MARCSTATE 	   0xF5		// Control state machine state
-#define WORTIME1 	   0xF6	    // High byte of WOR timer
+#define WORTIME1 	   0xF6	        // High byte of WOR timer
 #define WORTIME0 	   0xF7		// Low byte of WOR timer
 #define PKTSTATUS 	   0xF8		// Current GDOx status and packet status
-#define VCO_VC_DAC     0xF9		// Current setting from PLL cal module
+#define VCO_VC_DAC         0xF9		// Current setting from PLL cal module
 #define TXBYTES 	   0xFA		// Underflow and # of bytes in TXFIFO
 #define RXBYTES 	   0xFB		// Overflow and # of bytes in RXFIFO
-#define RCCTRL1_STATUS 0xFC 	//Last RC Oscillator Calibration Result
-#define RCCTRL0_STATUS 0xFD 	//Last RC Oscillator Calibration Result
+#define RCCTRL1_STATUS     0xFC 	//Last RC Oscillator Calibration Result
+#define RCCTRL0_STATUS     0xFD 	//Last RC Oscillator Calibration Result
 //--------------------------[END status register]-------------------------------
 
 class CC1100
