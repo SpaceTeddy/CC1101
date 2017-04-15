@@ -1,7 +1,7 @@
 CC1101
 ======
 
-driver library for Ti CC1100 / CC1101. 
+driver library for Ti CC1100 / CC1101. \n
 Contains Lib for Arduino and Raspberry Pi. 
 Note: Raspi need wiringPi 
 
@@ -15,13 +15,13 @@ CC1101 max. digital voltage level = 3.3V (not 5V tolerant)
 
 CC1101<->Arduino
 
-SI     -      MOSI (11)
-SO     -      MISO (12)
-CS     -      SS   (10)
-SCLK   -      SCK  (13)
-GDO2   -      free GPIO (3) 
-GDO0   -      not used in this demo
-GND    -      GND
+SI     -    MOSI (11)
+SO     -    MISO (12)
+CS     -    SS   (10)
+SCLK   -    SCK  (13)
+GDO2   -    free GPIO (3) 
+GDO0   -    not used in this demo
+GND    -    GND
 
 
 CC1101<->Raspi
@@ -34,4 +34,3 @@ SCLK   -    SCK  (P1-23)
 GDO2   -    free GPIO (P1-22) 
 GDO0   -    not used in this demo
 GND    -    P1-25
-
