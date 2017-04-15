@@ -24,7 +24,7 @@
 #define MISO_PIN 12
 #define MOSI_PIN 11
 #define SS_PIN   10
-#define GDO2	  3                //2 main, 5 remote, 3 M16
+#define GDO2	  3
 #define GDO0	 99
 
 /*----------------------[CC1100 - misc]---------------------------------------*/
@@ -32,8 +32,8 @@
 #define FIFOBUFFER			  0x42  //size of Fifo Buffer
 #define RSSI_OFFSET_868MHZ		  0x4E	//dec = 74
 #define TX_RETRIES_MAX			  0x05	//tx_retries_max
-#define ACK_TIMEOUT			   100		//ACK timeout in ms
-#define CC1100_COMPARE_REGISTER 0x00	//register compare 0=no compare 1=compare
+#define ACK_TIMEOUT			   100  //ACK timeout in ms
+#define CC1100_COMPARE_REGISTER           0x00	//register compare 0=no compare 1=compare
 #define BROADCAST_ADDRESS 		  0x00	//broadcast address
 #define CC1100_FREQ_315MHZ		  0x01
 #define CC1100_FREQ_434MHZ		  0x02
@@ -71,7 +71,7 @@
 #define PKTCTRL0 0x08         // Packet automation control
 #define ADDR  	 0x09         // Device address
 #define CHANNR   0x0A         // Channel number
-#define FSCTRL1  0x0B        	// Frequency synthesizer control
+#define FSCTRL1  0x0B         // Frequency synthesizer control
 #define FSCTRL0  0x0C         // Frequency synthesizer control
 #define FREQ2  	 0x0D         // Frequency control word, high byte
 #define FREQ1  	 0x0E         // Frequency control word, middle byte
@@ -81,11 +81,11 @@
 #define MDMCFG2  0x12         // Modem configuration
 #define MDMCFG1  0x13         // Modem configuration
 #define MDMCFG0  0x14         // Modem configuration
-#define DEVIATN  0x15        	// Modem deviation setting
+#define DEVIATN  0x15         // Modem deviation setting
 #define MCSM2  	 0x16         // Main Radio Cntrl State Machine config
 #define MCSM1  	 0x17         // Main Radio Cntrl State Machine config
 #define MCSM0  	 0x18         // Main Radio Cntrl State Machine config
-#define FOCCFG   0x19	        // Frequency Offset Compensation config
+#define FOCCFG   0x19	      // Frequency Offset Compensation config
 #define BSCFG  	 0x1A         // Bit Synchronization configuration
 #define AGCCTRL2 0x1B         // AGC control
 #define AGCCTRL1 0x1C         // AGC control
