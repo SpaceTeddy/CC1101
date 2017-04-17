@@ -38,7 +38,7 @@ CC1100 cc1100;
 
 void print_help(int exval) {
 	printf("%s,%s by CW\r\n", PACKAGE, VERSION_SW);
-	printf("%s [-h] [-V] [-q] [-a My_Addr] [-r Rx_Addr] [-c channel] [-f frequency]\r\n", PACKAGE);
+	printf("%s [-h] [-V] [-q] [-a My_Addr] [-c channel] [-f frequency]\r\n", PACKAGE);
 	printf("          [-m modulation]\n\r\n\r");
 	printf("  -h              			print this help and exit\r\n");
 	printf("  -V              			print version and exit\r\n\r\n");
