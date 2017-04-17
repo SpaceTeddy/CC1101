@@ -38,14 +38,14 @@ GND    -    P1-25<br />
 
 How to compile Raspi Demos:
 ===========================
-copy RX_Demo.cpp, TX_Demo.cpp, cc1100.cpp, cc1100.h in the same directory and compile <br />
+copy RX_Demo.cpp, TX_Demo.cpp, cc1100_raspi.cpp, cc1100_raspi.h in the same directory and compile <br />
 
 RX_Demo.cpp<br />
-sudo g++ -lwiringPi RX_Demo.cpp cc1100.cpp -o RX_Demo<br />
+sudo g++ -lwiringPi RX_Demo.cpp cc1100_raspi.cpp -o RX_Demo<br />
 sudo chmod 755 RX_Demo<br />
 <br />
 TX_Demo.cpp<br />
-sudo g++ -lwiringPi TX_Demo.cpp cc1100.cpp -o TX_Demo<br />
+sudo g++ -lwiringPi TX_Demo.cpp cc1100_raspi.cpp -o TX_Demo<br />
 sudo chmod 755 TX_Demo<br />
 <br />
 Command Line parameters:<br />
@@ -63,6 +63,8 @@ CC1100 SW [-h] [-V] [-q] [-a My_Addr] [-r Rx_Addr] [-c channel] [-f frequency]<b
   -m modulation [100,250,500] 		set modulation<br />
   
   Example,<br />
-  sudo ./TX_demo -a1 -c1 -f868 -m250<br />
-  sudo ./RX_demo -a1 -c1 -f868 -m250<br />
+  sudo ./TX_demo -a1 -c1 -f434 -m100<br />
+  sudo ./RX_demo -a3 -c1 -f434 -m100<br />
+  
+  Note: in TX_demo program, the receiver address for RX_demo is hardcoded to ADDR = 0x03.<br /> 
  
