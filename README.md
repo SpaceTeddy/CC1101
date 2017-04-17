@@ -63,8 +63,8 @@ CC1100 SW [-h] [-V] [-q] [-a My_Addr] [-r Rx_Addr] [-c channel] [-f frequency]<b
   -m modulation [100,250,500] 		set modulation<br />
   
   Example,<br />
-  sudo ./TX_demo -a1 -c1 -f434 -m100<br />
-  sudo ./RX_demo -a3 -c1 -f434 -m100<br />
+  sudo ./TX_Demo -a1 -c1 -f434 -m100<br />
+  sudo ./RX_Demo -a3 -c1 -f434 -m100<br />
   
   Note: in TX_demo program, the receiver address for RX_demo is hardcoded to ADDR = 0x03.<br /> 
  
