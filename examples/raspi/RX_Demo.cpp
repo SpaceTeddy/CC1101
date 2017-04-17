@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
-#include <unistd.h>
 
 #include <termios.h>
 #include <sys/select.h>
@@ -15,7 +13,7 @@
 #include <wiringPiSPI.h>
 
 #define PACKAGE    "CC1100 SW"
-#define VERSION_SW    "1.0.0"
+#define VERSION_SW "0.0.1"
 
 struct termios orig_termios;
 
@@ -30,6 +28,9 @@ volatile uint8_t cc1101_packet_available;
 int cc1100_freq_select, cc1100_mode_select, cc1100_channel_select;
 uint8_t cc1100_debug = 0;								//set CC1100 lib in no-debug output mode
 volatile uint8_t quite_mode=0;
+
+CC1100 cc1100;
+
 //-------------------------- [End] --------------------------
 
 void print_help(int exval) {
@@ -45,7 +46,7 @@ void print_help(int exval) {
 	//printf("  -r rx address [1-255] 	  	set my address\r\n\r\n");
 	printf("  -c channel 	[1-255] 		set transmit channel\r\n");
 	printf("  -f frequency  [315,434,868,915]  	set ISM band\r\n\r\n");
-	printf("  -m modulation [4,38,100,250,500] 	set modulation\r\n\r\n");
+	printf("  -m modulation [100,250,500] 		set modulation\r\n\r\n");
 
 	exit(exval);
 }
@@ -73,29 +74,8 @@ void set_conio_terminal_mode()
     //setvbuf(stdout, (char *)NULL, _IOLBF, 0);		//enable printf() buffer
 }
 
-int kbhit()
-{
-    struct timeval tv = { 0L, 0L };
-    fd_set fds;
-    FD_ZERO(&fds); // not in original posting to stackoverflow
-    FD_SET(0, &fds);
-    return select(1, &fds, NULL, NULL, &tv);
-}
-
-int getch()
-{
-    int r;
-    unsigned char c;
-    if ((r = read(0, &c, sizeof(c))) < 0) {
-        return r;
-    } else {
-        return c;
-    }
-}
-
 //|============================ Main ============================|
 int main(int argc, char *argv[]) {
-
 	//------------- command line option parser -------------------
 	int opt;
 	// no arguments given
@@ -163,10 +143,6 @@ int main(int argc, char *argv[]) {
 				case 500:
 					cc1100_mode_select = 5;
 					break;
-				case 4:
-                                        cc1100_mode_select = 6;
-                                        break;
-
 				}
 				break;
 				case ':':
@@ -188,44 +164,30 @@ int main(int argc, char *argv[]) {
 
 	//------------- hardware setup ------------------------
 	if(quite_mode == 1){
-		cc1100_debug = 0;								//set CC1100 lib in no-debug output mode
+		cc1100_debug = 0;		//set CC1100 lib in no-debug output mode
 	}else if(quite_mode == 0){
 		cc1100_debug = 1;
 	}
+	//set_conio_terminal_mode();		//setup console input/output
 
-	set_conio_terminal_mode();							//setup console input/output
+	wiringPiSetup();			//setup wiringPi library
 
-	wiringPiSetup();									//setup wiringPi library
-
-	cc1100.begin(My_addr);								//setup cc1000 RF IC
+	cc1100.begin(My_addr);			//setup cc1000 RF IC
 	cc1100.silde();
-	//cc1100.set_mode(0x04);                   //set modulation mode
-	//cc1100.set_ISM(0x03);                    //set frequency
+	//cc1100.set_mode(0x03);                   //set modulation mode
+	//cc1100.set_ISM(0x02);                    //set frequency
 	//cc1100.set_channel(0x01);                //set channel
 	cc1100.set_output_power_level(10);        //set PA level
-	//cc1100.set_myaddr(0x05);
+	//cc1100.set_myaddr(0x03);
 	//cc1100.spi_write_register(IOCFG2, 0x06); //set module in sync mode detection mode
-	cc1100.receive();
-
 	//cc1100.show_main_settings();             //shows setting debug messages to UART
-	cc1100.show_register_settings();
+    cc1100.show_register_settings();
+
+	cc1100.receive();
 	//------------------------- Main Loop ------------------------
-	printf("waiting for incomming package...\n");
-
 	for (;;) {
-
-		if(kbhit()) // Nur wenn auch eine Taste gedrückt ist
-    			{
-        			char c = getch(); // Muss auf keine Eingabe warten, Taste ist bereits gedrückt 
-        			switch(c){
-            			case 'q':
-					printf("\nExit\n");
-					exit(0);
-        			}
-    			}
-
-		delay(1);                                //delay to reduce system load
-
+		delay(1);                            //delay to reduce system load
+		
 		if (cc1100.packet_available())		 //checks if a packed is available
 		{
 		  cc1100.get_payload(Rx_fifo, pktlen, rx_addr, sender, rssi_dbm, lqi); //stores the payload data to Rx_fifo
