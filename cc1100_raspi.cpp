@@ -719,7 +719,6 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
                               printf("0x%02X ", rxbuffer[i]);
                          }printf("\r\n");
 
-                         printf("ACK! ");
                          printf("RSSI:%d ", rssi_dbm);
                          printf("LQI:");printf("0x%02X ", lqi);
                          printf("CRC:");printf("0x%02X ", crc);
