@@ -996,7 +996,7 @@ void CC1100::spi_begin(void)
 {
      int x = 0;
      //printf ("init SPI bus... ");
-     if ((x = wiringPiSPISetup (0, 8000000)) < 0)
+     if ((x = wiringPiSPISetup (0, 4000000)) < 0)
      {
           if(cc1100_debug == 1){
           printf ("ERROR: wiringPiSPISetup failed!\r\n");
