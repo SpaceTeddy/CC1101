@@ -50,7 +50,7 @@ sudo chmod 755 TX_Demo<br />
 <br />
 Command Line parameters:<br />
 ========================<br />
-CC1100 SW [-h] [-V] [-q] [-a My_Addr] [-r Rx_Addr] [-c channel] [-f frequency]<br />
+CC1100 SW [-h] [-V] [-q] [-a My_Addr] [-c channel] [-f frequency]<br />
           [-m modulation]<br />
 <br />
   -h              			print this help and exit<br />
