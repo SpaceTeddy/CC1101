@@ -490,10 +490,11 @@ uint8_t CC1100::silde(void)
      while(marcstate != 0x01)                               //0x01 = SILDE
      {
           marcstate = (spi_read_register(MARCSTATE) & 0x1F);          //read out state of cc1100 to be sure in RX
-          //uart_puthex_byte(marcstate);
-    if(i++ > 100){                    //aborts loop if state is nor reached after 100 tries
+          //printf("marcstate_rx: 0x%02X\r", marcstate);
+          delayMicroseconds(500);
+      if(i++ > 222){                    //aborts loop if state is nor reached after 222 tries
         return FALSE;
-    }
+      }
      }
      //Serial.println();
   return TRUE;
@@ -512,8 +513,8 @@ uint8_t CC1100::transmit(void)
      {
           marcstate = (spi_read_register(MARCSTATE) & 0x1F);           //read out state of cc1100 to be sure in IDLE and TX is finished
           //printf("marcstate_tx: 0x%02X ",marcstate);
-          delayMicroseconds(100);                          //must be in for ever reason
-          if(i++ > 100){                          //aborts loop if state is nor reached after 100 tries
+          delayMicroseconds(500);                          //must be in for ever reason
+          if(i++ > 222){                          //aborts loop if state is nor reached after 222 tries
                     return FALSE;
           }
      }
@@ -538,7 +539,8 @@ uint8_t CC1100::receive(void)
      {
           marcstate = (spi_read_register(MARCSTATE) & 0x1F);          //read out state of
           //printf("marcstate_rx: 0x%02X\r", marcstate);
-          if(i++ > 100){                    //aborts loop if state is nor reached after 100 tries
+          delayMicroseconds(500);   
+          if(i++ > 222){                    //aborts loop if state is nor reached after 222 tries
                     return FALSE;
           }
      }
