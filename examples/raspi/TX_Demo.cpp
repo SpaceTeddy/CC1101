@@ -1,4 +1,4 @@
-#include "cc1100.h"
+#include "cc1100_raspi.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -32,7 +32,7 @@ int cc1100_freq_select, cc1100_mode_select, cc1100_channel_select;
 uint8_t cc1100_debug = 0;								//set CC1100 lib in no-debug output mode
 volatile uint8_t quite_mode=0;
 
-//CC1100 cc1100;
+CC1100 cc1100;
 
 //-------------------------- [End] --------------------------
 
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
 	}else if(quite_mode == 0){
 		cc1100_debug = 1;
 	}
-	set_conio_terminal_mode();		//setup console input/output
+	//set_conio_terminal_mode();		//setup console input/output
 
 	wiringPiSetup();			//setup wiringPi library
 
@@ -186,12 +186,13 @@ int main(int argc, char *argv[]) {
 	cc1100.receive();
 
 	cc1100.show_main_settings();             //shows setting debug messages to UART
-
+	cc1100.show_register_settings();
 	//------------------------- Main Loop ------------------------
-	for (;;) {
+	for (;;)
+	{
 		delay(1);                            //delay to reduce system load
 
-  		if (millis() - prev_millis_1s_timer >= INTERVAL_1S_TIMER) // one second update timer 
+		if (millis() - prev_millis_1s_timer >= INTERVAL_1S_TIMER) // one second update timer
 		{
     			Rx_addr = 0x03;                                              //receiver address
 
@@ -204,13 +205,14 @@ int main(int argc, char *argv[]) {
 
     			Pktlen = 0x07;                                               //set packet len to 0x13
 
-    			cc1100.sent_packet(My_addr, Rx_addr, Tx_fifo, Pktlen, 1);    //sents package over air. ACK is received via GPIO polling
+    			cc1100.sent_packet(My_addr, Rx_addr, Tx_fifo, Pktlen, 2);    //sents package over air. ACK is received via GPIO polling
 
-    			printf("tx_time: %s ms \r\n", millis()-time_stamp);
+    			printf("tx_time: %ums \r\n", millis());
 			prev_millis_1s_timer = millis();
   		}
 
 	}
+    printf("finished!\n");
     return 0;
 }
 //-------------------- END OF MAIN --------------------------------
