@@ -126,6 +126,7 @@ static uint8_t cc1100_GFSK_100_kb[] EEMEM = {
 					0xFF,  // ADDR          Device Address
 					0x00,  // CHANNR        Channel Number
 					0x08,  // FSCTRL1       Frequency Synthesizer Control
+					0x00,  // FSCTRL0       Frequency Synthesizer Control
 					0x21,  // FREQ2         Frequency Control Word, High Byte
 					0x65,  // FREQ1         Frequency Control Word, Middle Byte
 					0x6A,  // FREQ0         Frequency Control Word, Low Byte
