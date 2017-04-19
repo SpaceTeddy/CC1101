@@ -50,21 +50,33 @@ sudo chmod 755 TX_Demo<br />
 <br />
 Command Line parameters:<br />
 ========================<br />
-CC1100 SW [-h] [-V] [-q] [-a My_Addr] [-c channel] [-f frequency]<br />
+TX_Demo:<br />
+CC1100 SW [-h] [-V] [-a My_Addr] [-r RxDemo_Addr] [-i Msg_Interval] [-t tx_retries] [-c channel] [-f frequency]<br />
           [-m modulation]<br />
 <br />
   -h              			print this help and exit<br />
   -V              			print version and exit<br />
   -v              			set verbose flag<br />
-  -q              			set quite mode flag<br />
   -a my address [1-255] 		set my address<br />
-  -c channel 	[1-255] 		set transmit channel<br />
+  -r rx address [1-255] 	  	set RxDemo receiver address<br />
+  -i interval ms[1-6000] 	  	sets message interval timing<br />
+  -t tx_retries [0-255] 	  	sets message send retries<br />
+  -c channel    [1-255] 		set transmit channel<br />
   -f frequency  [315,434,868,915]  	set ISM band<br />
-  -m modulation [100,250,500] 		set modulation<br />
+  -m modulation [100,250,500]           set modulation<br />
   
   Example,<br />
-  sudo ./TX_Demo -a1 -c1 -f434 -m100<br />
+  sudo ./TX_Demo -a1 -r3 -i1000 -t5 -c1 -f434 -m100<br />
+  
+  RX_Demo:<br />
+  CC1100 SW [-h] [-V] [-v] [-a My_Addr] [-c channel] [-f frequency] [-m modulation]<br />
+  -h              			print this help and exit<br />
+  -V              			print version and exit<br />
+  -v              			set verbose flag<br />
+  -a my address [1-255] 		set my address<br />
+  -c channel    [1-255] 		set transmit channel<br />
+  -f frequency  [315,434,868,915]  	set ISM band<br />
+  -m modulation [100,250,500]           set modulation<br />
+          
   sudo ./RX_Demo -a3 -c1 -f434 -m100<br />
   
-  Note: in TX_demo program, the receiver address for RX_demo is hardcoded to ADDR = 0x03.<br /> 
- 
