@@ -8,7 +8,7 @@
 '  christian weithe
 '  module contains helper helper code from other people. Thx for that
 '-----------------------------------------------------------------------------*/
-#include <cc1100.h>
+#include "cc1100_arduino.h
 
 //-------------------[global EEPROM default settings 868 Mhz]-------------------
 static uint8_t cc1100_GFSK_1_2_kb[] EEMEM = {
@@ -266,8 +266,8 @@ static uint8_t cc1100_OOK_4_8_kb[] EEMEM = {
                     0x2E,  // IOCFG1        GDO1 Output Pin Configuration
                     0x06,  // IOCFG0        GDO0 Output Pin Configuration
                     0x47,  // FIFOTHR       RX FIFO and TX FIFO Thresholds
-                    0xD3,  // SYNC1         Sync Word, High Byte
-                    0x91,  // SYNC0         Sync Word, Low Byte
+                    0x57,  // SYNC1         Sync Word, High Byte
+                    0x43,  // SYNC0         Sync Word, Low Byte
                     0xFF,  // PKTLEN        Packet Length
                     0x04,  // PKTCTRL1      Packet Automation Control
                     0x05,  // PKTCTRL0      Packet Automation Control
@@ -336,7 +336,7 @@ void CC1100::reset(void)                  // reset defined in cc1100 datasheet
 //------------------------[set Power Down]--------------------------------------
 void CC1100::powerdown(void)
 {
-    silde();
+    sidle();
     spi_write_strobe(SPWD);               // CC1100 Power Down
 }
 //-----------------------------[end]--------------------------------------------
@@ -524,7 +524,7 @@ void CC1100::show_main_settings(void)
 //-------------------------------[end]------------------------------------------
 
 //----------------------------[idle mode]---------------------------------------
-uint8_t CC1100::silde(void)
+uint8_t CC1100::sidle(void)
 {
     uint8_t marcstate, i;
 
@@ -532,7 +532,7 @@ uint8_t CC1100::silde(void)
 
     marcstate = 0xFF;                     //set unknown/dummy state value
 
-    while(marcstate != 0x01)              //0x01 = SILDE
+    while(marcstate != 0x01)              //0x01 = sidle
     {
         marcstate = (spi_read_register(MARCSTATE) & 0x1F); //read out state of cc1100 to be sure in RX
         //uart_puthex_byte(marcstate);
@@ -567,7 +567,7 @@ uint8_t CC1100::receive(void)
 {
     uint8_t marcstate, i;
 
-    silde();                              //sets to idle first.
+    sidle();                              //sets to idle first.
     spi_write_strobe(SRX);                //writes receive strobe (receive mode)
 
     marcstate = 0xFF;                     //set unknown/dummy state value
@@ -628,7 +628,7 @@ void CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
         }
     Serial.println();
 */
-    silde();
+    sidle();
     spi_write_strobe(SFRX);delayMicroseconds(100);
     receive();
 }
@@ -786,7 +786,8 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
 //-------------------------[check ACKNOLAGE]------------------------------------
 uint8_t CC1100::check_acknolage(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr)
 {
-    if((rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS) && \
+    if((pktlen == 0x05 && \
+        rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS) && \
         rxbuffer[2] == sender && \
         rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k') //acknolage received!
         {
@@ -972,6 +973,8 @@ void CC1100::set_ISM(uint8_t ism_freq)
     }
 }
 //-------------------------------[end]------------------------------------------
+
+//--------------------------[set frequency]-------------------------------------
 /*
 void CC1100::set_freq(uint32_t freq)
 {
@@ -993,6 +996,8 @@ void CC1100::set_freq(uint32_t freq)
 
 }
 */
+//-------------------------------[end]------------------------------------------
+
 //---------------------------[set PATABLE]--------------------------------------
 void CC1100::set_patable(uint8_t *patable_arr)
 {
@@ -1018,37 +1023,59 @@ void CC1100::set_output_power_level(int8_t dBm)
 }
 //-------------------------------[end]------------------------------------------
 
-//-------[set Modulation type 2-FSK=0; GFSK=1; ASK/OOK=3; 4-FSK=4; MSK=7]-------
+//-------[set Modulation type 2-FSK=0; GFSK=1; ASK/OOK=3; 4-FSK=4; MSK=7]------
 void CC1100::set_modulation_type(uint8_t cfg)
 {
     uint8_t data;
     data = spi_read_register(MDMCFG2);
     data = (data & 0x8F) | (((cfg) << 4) & 0x70);
     spi_write_register(MDMCFG2, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
 }
-//-------------------------------[end]------------------------------------------
+//-------------------------------[end]-----------------------------------------
 
-//-------------------[set modem datarate and deviant]---------------------------
+//------------------------[set preamble Len]-----------------------------------
+void CC1100::set_preamble_len(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG1);
+    data = (data & 0x8F) | (((cfg) << 4) & 0x70);
+    spi_write_register(MDMCFG1, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
+//-------------------[set modem datarate and deviant]--------------------------
 void CC1100::set_datarate(uint8_t mdmcfg4, uint8_t mdmcfg3, uint8_t deviant)
 {
     spi_write_register(MDMCFG4, mdmcfg4);
     spi_write_register(MDMCFG3, mdmcfg3);
     spi_write_register(DEVIATN, deviant);
 }
-//-------------------------------[end]------------------------------------------
+//-------------------------------[end]-----------------------------------------
 
-/*
-//-------[set sync mode no sync=0;]-------
+//----------------------[set sync mode no sync=0;]-----------------------------
 void CC1100::set_sync_mode(uint8_t cfg)
 {
     uint8_t data;
     data = spi_read_register(MDMCFG2);
     data = (data & 0xF8) | (cfg & 0x07);
     spi_write_register(MDMCFG2, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
+//---------------[set FEC ON=TRUE; OFF=FALSE]----------------------------------
+void CC1100::set_fec(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG1);
+    data = (data & 0x7F) | (((cfg) << 7) & 0x80);
+    spi_write_register(MDMCFG1, data);
+    printf("MDMCFG1: 0x%02X\n", data);
 }
 //-------------------------------[end]------------------------------------------
-/*
-/*
+
 //---------------[set data_whitening ON=TRUE; OFF=FALSE]------------------------
 void CC1100::set_data_whitening(uint8_t cfg)
 {
@@ -1056,19 +1083,20 @@ void CC1100::set_data_whitening(uint8_t cfg)
     data = spi_read_register(PKTCTRL0);
     data = (data & 0xBF) | (((cfg) << 6) & 0x40);
     spi_write_register(PKTCTRL0, data);
+    //printf("PKTCTRL0: 0x%02X\n", data);
 }
-//-------------------------------[end]------------------------------------------
+//-------------------------------[end]-----------------------------------------
 
-//------------[set manchester encoding ON=TRUE; OFF=FALSE]----------------------
+//------------[set manchester encoding ON=TRUE; OFF=FALSE]---------------------
 void CC1100::set_manchaster_encoding(uint8_t cfg)
 {
     uint8_t data;
     data = spi_read_register(MDMCFG2);
     data = (data & 0xF7) | (((cfg) << 3) & 0x08);
     spi_write_register(MDMCFG2, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
 }
 //-------------------------------[end]------------------------------------------
-*/
 
 //--------------------------[rssi_convert]--------------------------------------
 int8_t CC1100::rssi_convert(uint8_t Rssi_hex)
@@ -1111,7 +1139,7 @@ uint8_t CC1100::get_temp(uint8_t *ptemp_Arr)
   uint16_t adc_result = 0;
     uint32_t temperature = 0;
 
-    silde();                              //sets CC1100 into IDLE
+    sidle();                              //sets CC1100 into IDLE
     spi_write_register(PTEST,0xBF);       //enable temp sensor
     delay(50);                        //wait a bit
 
