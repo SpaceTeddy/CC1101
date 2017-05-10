@@ -36,7 +36,7 @@ void setup()
   // init CC1101 RF-module and get My_address from EEPROM
   cc1100.begin(My_addr);                   //inits RF module with main default settings
   
-  cc1100.silde();                          //set to ILDE first
+  cc1100.sidle();                          //set to ILDE first
   cc1100.set_mode(0x04);                   //set modulation array mode
   cc1100.set_ISM(0x01);                    //set frequency
   cc1100.set_channel(0x01);                //set channel
