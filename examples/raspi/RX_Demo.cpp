@@ -11,7 +11,7 @@
 #include <wiringPiSPI.h>
 
 #define PACKAGE    "CC1100 SW"
-#define VERSION_SW "0.9.0"
+#define VERSION_SW "0.9.1"
 
 //--------------------------[Global CC1100 variables]--------------------------
 uint8_t Tx_fifo[FIFOBUFFER], Rx_fifo[FIFOBUFFER];
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 	wiringPiSetup();			//setup wiringPi library
 
 	cc1100.begin(My_addr);			//setup cc1000 RF IC
-	cc1100.silde();
+	cc1100.sidle();
 	//cc1100.set_mode(0x03);                   //set modulation mode
 	//cc1100.set_ISM(0x02);                    //set frequency
 	//cc1100.set_channel(0x01);                //set channel
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 	//cc1100.spi_write_register(IOCFG2, 0x06); //set module in sync mode detection mode
 	
 	cc1100.show_main_settings();             //shows setting debug messages to UART
-    cc1100.show_register_settings();
+        cc1100.show_register_settings();
 
 	cc1100.receive();
 	//------------------------- Main Loop ------------------------
