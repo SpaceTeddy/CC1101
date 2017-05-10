@@ -8,7 +8,7 @@
 '  christian weithe
 '  module contains helper helper code from other people. Thx for that
 '-----------------------------------------------------------------------------*/
-#include "cc1100_arduino.h
+#include "cc1100_arduino.h"
 
 //-------------------[global EEPROM default settings 868 Mhz]-------------------
 static uint8_t cc1100_GFSK_1_2_kb[] EEMEM = {
