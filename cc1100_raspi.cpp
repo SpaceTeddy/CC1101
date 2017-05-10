@@ -275,8 +275,8 @@ static uint8_t cc1100_OOK_4_8_kb[CFG_REGISTER] = {
                     0x2E,  // IOCFG1        GDO1 Output Pin Configuration
                     0x06,  // IOCFG0        GDO0 Output Pin Configuration
                     0x47,  // FIFOTHR       RX FIFO and TX FIFO Thresholds
-                    0xD3,  // SYNC1         Sync Word, High Byte
-                    0x91,  // SYNC0         Sync Word, Low Byte
+                    0x57,  // SYNC1         Sync Word, High Byte
+                    0x43,  // SYNC0         Sync Word, Low Byte
                     0xFF,  // PKTLEN        Packet Length
                     0x04,  // PKTCTRL1      Packet Automation Control
                     0x05,  // PKTCTRL0      Packet Automation Control
@@ -345,7 +345,7 @@ void CC1100::reset(void)
 //--------------------------------[set Power Down]-----------------------------
 void CC1100::powerdown(void)
 {
-    silde();
+    sidle();
     spi_write_strobe(SPWD);
 }
 //-------------------------------------[end]-----------------------------------
@@ -482,7 +482,7 @@ void CC1100::show_main_settings(void)
 //-------------------------------------[end]-----------------------------------
 
 //----------------------------------[idle mode]--------------------------------
-uint8_t CC1100::silde(void)
+uint8_t CC1100::sidle(void)
 {
      uint8_t marcstate, i;
      
@@ -526,7 +526,7 @@ uint8_t CC1100::receive(void)
 {
      uint8_t marcstate, i;
 
-     silde();                                               //sets to idle first.
+     sidle();                                               //sets to idle first.
      spi_write_strobe(SRX);                                 //writes receive strobe (receive mode)
      
      marcstate = 0xFF;                                      //set unknown/dummy state value
@@ -577,7 +577,7 @@ void CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
                rxbuffer[i] = spi_read_register(RXFIFO_SINGLE_BYTE);
           }
      }
-     silde();
+     sidle();
      spi_write_strobe(SFRX);delayMicroseconds(100);
      receive();
 }
@@ -740,9 +740,11 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
 //--------------------------------[check ACKNOLAGE]----------------------------
 uint8_t CC1100::check_acknolage(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr)
 {
-     if((rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS) && \
-        rxbuffer[2] == sender && \
-        rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k') //acknolage received!
+
+     if((pktlen == 0x05 && \
+         rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS) && \
+         rxbuffer[2] == sender && \
+         rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k')   //acknolage received!
      {
           if(rxbuffer[1] == BROADCAST_ADDRESS)       //if receiver address BROADCAST_ADDRESS skip acknolage
           {
@@ -762,9 +764,9 @@ uint8_t CC1100::check_acknolage(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sende
                printf("CRC:0x%02X\r\n",crc);
           }
           return TRUE;
-        }
-     return FALSE;
+     }
 
+     return FALSE;
 }
 //-------------------------------------[end]-----------------------------------
 
@@ -840,11 +842,13 @@ void CC1100::set_mode(uint8_t mode)
           case 0x05:
                          spi_write_burst(WRITE_BURST,cc1100_MSK_500_kb,CFG_REGISTER);
                          break;
+          case 0x06:
+                         spi_write_burst(WRITE_BURST,cc1100_OOK_4_8_kb,CFG_REGISTER);
+                         break;
           default:
                          spi_write_burst(WRITE_BURST,cc1100_GFSK_100_kb,CFG_REGISTER);
                          break;
      }
-
      return;
 }
 //-------------------------------------[end]-----------------------------------
@@ -929,6 +933,81 @@ void CC1100::set_output_power_level(int8_t dBm)
 }
 //-------------------------------------[end]-----------------------------------
 
+//-------[set Modulation type 2-FSK=0; GFSK=1; ASK/OOK=3; 4-FSK=4; MSK=7]------
+void CC1100::set_modulation_type(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG2);
+    data = (data & 0x8F) | (((cfg) << 4) & 0x70);
+    spi_write_register(MDMCFG2, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
+//------------------------[set preamble Len]-----------------------------------
+void CC1100::set_preamble_len(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG1);
+    data = (data & 0x8F) | (((cfg) << 4) & 0x70);
+    spi_write_register(MDMCFG1, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
+//-------------------[set modem datarate and deviant]--------------------------
+void CC1100::set_datarate(uint8_t mdmcfg4, uint8_t mdmcfg3, uint8_t deviant)
+{
+    spi_write_register(MDMCFG4, mdmcfg4);
+    spi_write_register(MDMCFG3, mdmcfg3);
+    spi_write_register(DEVIATN, deviant);
+}
+//-------------------------------[end]-----------------------------------------
+
+//-------------------------[set sync mode ]------------------------------------
+void CC1100::set_sync_mode(uint8_t cfg) // 0=no sync word; 1,2 = 16bit sync word, 3= 32bit sync word
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG2);
+    data = (data & 0xF8) | (cfg & 0x07);
+    spi_write_register(MDMCFG2, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
+//---------------[set FEC ON=TRUE; OFF=FALSE]----------------------------------
+void CC1100::set_fec(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG1);
+    data = (data & 0x7F) | (((cfg) << 7) & 0x80);
+    spi_write_register(MDMCFG1, data);
+    printf("MDMCFG1: 0x%02X\n", data);
+}
+//-------------------------------[end]------------------------------------------
+
+//---------------[set data_whitening ON=TRUE; OFF=FALSE]------------------------
+void CC1100::set_data_whitening(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(PKTCTRL0);
+    data = (data & 0xBF) | (((cfg) << 6) & 0x40);
+    spi_write_register(PKTCTRL0, data);
+    //printf("PKTCTRL0: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
+//------------[set manchester encoding ON=TRUE; OFF=FALSE]---------------------
+void CC1100::set_manchaster_encoding(uint8_t cfg)
+{
+    uint8_t data;
+    data = spi_read_register(MDMCFG2);
+    data = (data & 0xF7) | (((cfg) << 3) & 0x08);
+    spi_write_register(MDMCFG2, data);
+    //printf("MDMCFG2: 0x%02X\n", data);
+}
+//-------------------------------[end]-----------------------------------------
+
 //---------------------------------[rssi_convert]------------------------------
 int8_t CC1100::rssi_convert(uint8_t Rssi_hex)
 {
@@ -974,7 +1053,7 @@ uint8_t CC1100::get_temp(uint8_t *ptemp_Arr)
     uint16_t adc_result = 0;
     uint32_t temperature = 0;
 
-    silde();                              //sets CC1100 into IDLE
+    sidle();                              //sets CC1100 into IDLE
     spi_write_register(PTEST,0xBF);       //enable temp sensor
     _delay_ms(50);                        //wait a bit
 
