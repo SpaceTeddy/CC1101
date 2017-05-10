@@ -13,9 +13,9 @@
 //#define SCK_PIN  13
 //#define MISO_PIN 12
 //#define MOSI_PIN 11
-#define SS_PIN     10
-#define GDO2	    6
-#define GDO0	   99
+#define SS_PIN   10
+#define GDO2	  6
+#define GDO0	 99
 
 /*----------------------[CC1100 - misc]---------------------------------------*/
 #define CRYSTAL_FREQUENCY         26000000
@@ -23,7 +23,7 @@
 #define FIFOBUFFER                0x42  //size of Fifo Buffer
 #define RSSI_OFFSET_868MHZ        0x4E  //dec = 74
 #define TX_RETRIES_MAX            0x05  //tx_retries_max
-#define ACK_TIMEOUT                100      //ACK timeout in ms
+#define ACK_TIMEOUT                100  //ACK timeout in ms
 #define CC1100_COMPARE_REGISTER   0x00  //register compare 0=no compare 1=compare
 #define BROADCAST_ADDRESS         0x00  //broadcast address
 #define CC1100_FREQ_315MHZ        0x01
@@ -156,7 +156,7 @@ class CC1100
         void reset(void);
         void wakeup(void);
         void powerdown(void);
-        uint8_t silde(void);
+        uint8_t sidle(void);
         uint8_t transmit(void);
         uint8_t receive(void);
 
@@ -191,6 +191,13 @@ class CC1100
         void set_mode(uint8_t mode);
         void set_output_power_level(int8_t dbm);
         void set_patable(uint8_t *patable_arr);
+        void set_fec(uint8_t cfg);
+        void set_data_whitening(uint8_t cfg);
+        void set_modulation_type(uint8_t cfg);
+        void set_preamble_len(uint8_t cfg);
+        void set_manchaster_encoding(uint8_t cfg);
+        void set_sync_mode(uint8_t cfg);
+        void set_datarate(uint8_t mdmcfg4, uint8_t mdmcfg3, uint8_t deviant);
 };
 
 
