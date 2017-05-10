@@ -10,7 +10,7 @@
 #include <wiringPiSPI.h>
 
 #define PACKAGE    "CC1100 SW"
-#define VERSION_SW "0.9.5"
+#define VERSION_SW "0.9.6"
 
 #define INTERVAL_1S_TIMER 1000
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
 	wiringPiSetup();			//setup wiringPi library
 
 	cc1100.begin(My_addr);			//setup cc1000 RF IC
-	cc1100.silde();
+	cc1100.sidle();
 	//cc1100.set_mode(0x04);                   //set modulation mode
 	//cc1100.set_ISM(0x03);                    //set frequency
 	//cc1100.set_channel(0x01);                //set channel
