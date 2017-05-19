@@ -71,14 +71,14 @@ for x in start:
     txt_neu = txt_neu + "\n"
 
 print ("Total Bytes: " + str(total_bytes))
-print ("#define EEPROM_LEN = " + str(total_bytes))
+print ("#define EEPROM_LEN " + str(total_bytes))
 print ("uint8_t eeprom_cc1101[EEPROM_LEN] = {")
 if(max_lenght == 16):
     print("//00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F")
 if(max_lenght == 32):
     print("//00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F   10   11   12   13   14   15   16   17   18   19   1A   1B   1C   1D   1E   1F")
 print (txt_neu)
-f.write("#define EEPROM_LEN = " + str(total_bytes) + "\n")
+f.write("#define EEPROM_LEN " + str(total_bytes) + "\n")
 f.write("uint8_t eeprom_cc1101[EEPROM_LEN] = { \n")
 if(max_lenght == 16):
     f.write("//00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F" + "\n")
