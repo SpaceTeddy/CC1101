@@ -81,3 +81,23 @@ CC1100 SW [-h] [-V] [-a My_Addr] [-r RxDemo_Addr] [-i Msg_Interval] [-t tx_retri
   Example,<br />
   sudo ./RX_Demo -v -a3 -c1 -f434 -m100<br />
   
+
+Arduino
+=======
+
+The CC1101 RF settings must be stored in the Arduino EEPROM.
+Follow the following steps, how to store the EEPROM file (*.eep) to your Arduino EEPROM
+
+- compile the tx_demo or rx_demo sketch
+- remember the path of your compiled output data (arduino hex file and eep file)
+- use the python eeprom_create.py to generate the eeprom array for the eeprom_write.ino
+  This is needed because the compiler can choose the EEPROM position by its own.
+- usage: ./eeprom_create.py <input *.eep file>
+- you get an output file with *.array extension'''
+- copy the output array content into the eeprom_write.ino sketch
+- compile the eeprom_write.ino sketch
+- upload into to your connected hardware
+- open the Arduino Serial console, set the baudrate to 38400 and restart your arduino hardware
+- type the character w to the input field and press the sent button
+- wait till eeprom is written
+- sent r to verify that eeprom is written.
