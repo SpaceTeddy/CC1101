@@ -86,7 +86,7 @@ Arduino
 =======
 
 The CC1101 RF settings must be stored in the Arduino EEPROM.
-Follow the following steps, how to store the EEPROM file (*.eep) to your Arduino EEPROM
+Follow the following steps, how to store the EEPROM file (*.eep) to your Arduino EEPROM. From my experience, you have to repeat this step only if you have changed the Arduino Version. 
 
 - compile the tx_demo or rx_demo sketch
 - remember the path of your compiled output data (arduino hex file and eep file)
