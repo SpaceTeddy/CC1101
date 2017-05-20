@@ -18,6 +18,7 @@ CC1101 max. digital voltage level = 3.3V (not 5V tolerant)
 ```
 CC1101<->Arduino
 
+Vdd    -    3.3V
 SI     -    MOSI (11)
 SO     -    MISO (12)
 CS     -    SS   (10)
