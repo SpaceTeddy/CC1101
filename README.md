@@ -102,7 +102,7 @@ Follow the following steps, how to store the compiled EEPROM file (*.eep) to you
 - remember the path of your compiled output data (Arduino *.hex file and *.eep file)
 - use the python eeprom_create.py to generate the eeprom array for the eeprom_write.ino
   This is needed because the compiler can choose the EEPROM position by its own.
-- usage: ./eeprom_create.py <input *.eep file>
+- usage: ``` ./eeprom_create.py <input *.eep file> ```
 - you get an output file with like *.array
 - open that file and copy the array content into the eeprom_write.ino sketch at the correct position
 - compile the eeprom_write.ino sketch
