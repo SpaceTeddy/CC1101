@@ -122,13 +122,14 @@ use uint8_t CC1100::begin(volatile uint8_t &My_addr) always as first configurati
 
 Device address
 --------------
-you should set a unique device address to your transmitter and a unique device address to your receiver. 
+you should set a unique device address for the transmitter and a unique device address for the receiver. 
 This can be done with void CC1100::set_myaddr(uint8_t addr).
+
+i.E. -> TX = 0x01 ; RX = 0x03
 
 
 Modulation modes
 ----------------
-
 the following modulation modes can be set by void CC1100::set_mode(uint8_t mode) . Transmitter and receiver must have the same Mode setting.
 
 1 = GFSK_1_2_kb<br />
@@ -138,9 +139,9 @@ the following modulation modes can be set by void CC1100::set_mode(uint8_t mode)
 5 = MSK_500_kb<br />
 6 = OOK_4_8_kb<br />
 
+
 ISM frequency band
 ------------------
-
 you can set a frequency operation band by void CC1100::set_ISM(uint8_t ism_freq) to make it compatible with your hardware.
 
 1 = 315<br />
