@@ -108,10 +108,10 @@ Follow the following steps, how to store the compiled EEPROM file (*.eep) to you
 - compile the eeprom_write.ino sketch
 - upload into to your connected arduino hardware
 - open the Arduino Serial console, set the baudrate to 38400 and restart your arduino hardware
-- type the character w to the input field and press the sent button
+- type the character ```w``` to the input field and press the sent button
 - wait till eeprom is written
-- sent r to verify that eeprom is written.
-- if your EEPROM data is correct written you can compile and upload the RX_Demo or TX_Demo sketch to that hardware
+- sent ```r``` to verify that eeprom is written.
+- if your EEPROM data is written correct, you can compile and upload the RX_Demo or TX_Demo sketch to that hardware
 
 
 Rapsberry Pi
