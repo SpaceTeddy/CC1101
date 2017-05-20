@@ -41,7 +41,7 @@ void setup()
   cc1100.begin(My_addr);                   //inits RF module with main default settings
   
   cc1100.sidle();                          //set to ILDE first
-  cc1100.set_mode(0x04);                   //set modulation array mode
+  cc1100.set_mode(0x04);                   //set modulation mode 1 = GFSK_1_2_kb; 2 = GFSK_38_4_kb; 3 = GFSK_100_kb; 4 = MSK_250_kb; 5 = MSK_500_kb; 6 = OOK_4_8_kb
   cc1100.set_ISM(0x02);                    //set ISM Band 1=315MHz; 2=433MHz; 3=868MHz; 4=915MHz
   cc1100.set_channel(0x01);                //set channel
   cc1100.set_output_power_level(0);        //set PA level in dbm
