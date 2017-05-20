@@ -29,14 +29,14 @@ GND    -    GND
 
 CC1101<->Raspi
 
-Vdd    -    3.3V (P1-01)<br />
-SI     -    MOSI (P1-19)<br />
-SO     -    MISO (P1-21)<br />
-CS     -    SS   (P1-24)<br />
-SCLK   -    SCK  (P1-23)<br />
-GDO2   -    GPIO (P1-22) <br />
-GDO0   -    not used in this demo<br />
-GND    -    P1-25<br />
+Vdd    -    3.3V (P1-01)
+SI     -    MOSI (P1-19)
+SO     -    MISO (P1-21)
+CS     -    SS   (P1-24)
+SCLK   -    SCK  (P1-23)
+GDO2   -    GPIO (P1-22)
+GDO0   -    not used in this demo
+GND    -    P1-25
 ```
 
 General description of RF packet
@@ -57,7 +57,7 @@ TX Bytes example:<br />
 Basic configuration
 ===================
 
-use uint8_t **CC1100::begin(volatile uint8_t &My_addr)** always as first configuration step. For Arduino devices, this function returns the device address, which was already stored in the Arduino EEPROM.
+use **uint8_t CC1100::begin(volatile uint8_t &My_addr)** always as first configuration step. For Arduino devices, this function returns the device address, which was already stored in the Arduino EEPROM.
 
 Device address
 --------------
@@ -72,12 +72,12 @@ Modulation modes
 the following modulation modes can be set by **void CC1100::set_mode(uint8_t mode)**. Transmitter and receiver must have the same Mode setting.
 
 ```
-1 = GFSK_1_2_kb<br />
-2 = GFSK_38_4_kb<br />
-3 = GFSK_100_kb<br />
-4 = MSK_250_kb<br />
-5 = MSK_500_kb<br />
-6 = OOK_4_8_kb<br />
+1 = GFSK_1_2_kb
+2 = GFSK_38_4_kb
+3 = GFSK_100_kb
+4 = MSK_250_kb
+5 = MSK_500_kb
+6 = OOK_4_8_kb
 ```
 
 ISM frequency band
@@ -85,10 +85,10 @@ ISM frequency band
 you can set a frequency operation band by **void CC1100::set_ISM(uint8_t ism_freq)** to make it compatible with your hardware.
 
 ```
-1 = 315<br />
-2 = 433<br />
-3 = 868<br />
-4 = 915<br />
+1 = 315
+2 = 433
+3 = 868
+4 = 915
 ```
 
 Arduino specific
@@ -125,14 +125,14 @@ copy RX_Demo.cpp, TX_Demo.cpp, cc1100_raspi.cpp, cc1100_raspi.h in the same dire
 
 RX_Demo.cpp<br />
 ```
-sudo g++ -lwiringPi RX_Demo.cpp cc1100_raspi.cpp -o RX_Demo<br />
-sudo chmod 755 RX_Demo<br />
+sudo g++ -lwiringPi RX_Demo.cpp cc1100_raspi.cpp -o RX_Demo
+sudo chmod 755 RX_Demo
 ```
 <br />
 TX_Demo.cpp<br />
 ```
-sudo g++ -lwiringPi TX_Demo.cpp cc1100_raspi.cpp -o TX_Demo<br />
-sudo chmod 755 TX_Demo<br />
+sudo g++ -lwiringPi TX_Demo.cpp cc1100_raspi.cpp -o TX_Demo
+sudo chmod 755 TX_Demo
 ```
 <br />
 
@@ -141,36 +141,39 @@ Command Line parameters
 
 TX_Demo:<br />
 ```
-CC1100 SW [-h] [-V] [-a My_Addr] [-r RxDemo_Addr] [-i Msg_Interval] [-t tx_retries] [-c channel] [-f frequency]<br />
-          [-m modulation]<br />
-<br />
-  -h              			print this help and exit<br />
-  -V              			print version and exit<br />
-  -v              			set verbose flag<br />
-  -a my address [1-255] 		set my address<br />
-  -r rx address [1-255] 	  	set RxDemo receiver address<br />
-  -i interval ms[1-6000] 	  	sets message interval timing<br />
-  -t tx_retries [0-255] 	  	sets message send retries<br />
-  -c channel    [1-255] 		set transmit channel<br />
-  -f frequency  [315,434,868,915]  	set ISM band<br />
-  -m modulation [100,250,500]           set modulation<br />
+CC1100 SW [-h] [-V] [-a My_Addr] [-r RxDemo_Addr] [-i Msg_Interval] [-t tx_retries] [-c channel] [-f frequency]
+          [-m modulation]
+
+  -h              			print this help and exit
+  -V              			print version and exit
+  -v              			set verbose flag
+  -a my address [1-255] 		set my address
+  -r rx address [1-255] 	  	set RxDemo receiver address
+  -i interval ms[1-6000] 	  	sets message interval timing
+  -t tx_retries [0-255] 	  	sets message send retries
+  -c channel    [1-255] 		set transmit channel
+  -f frequency  [315,434,868,915]  	set ISM band
+  -m modulation [100,250,500]           set modulation
   ```
+  
   Example,<br />
   ```
-  sudo ./TX_Demo -v -a1 -r3 -i1000 -t5 -c1 -f434 -m100<br />
+  sudo ./TX_Demo -v -a1 -r3 -i1000 -t5 -c1 -f434 -m100
   ```
+  
   RX_Demo:<br />
   ```
-  CC1100 SW [-h] [-V] [-v] [-a My_Addr] [-c channel] [-f frequency] [-m modulation]<br />
-  -h              			print this help and exit<br />
-  -V              			print version and exit<br />
-  -v              			set verbose flag<br />
-  -a my address [1-255] 		set my address<br />
-  -c channel    [1-255] 		set transmit channel<br />
-  -f frequency  [315,434,868,915]  	set ISM band<br />
-  -m modulation [100,250,500]           set modulation<br />
+  CC1100 SW [-h] [-V] [-v] [-a My_Addr] [-c channel] [-f frequency] [-m modulation]
+  -h              			print this help and exit
+  -V              			print version and exit
+  -v              			set verbose flag
+  -a my address [1-255] 		set my address
+  -c channel    [1-255] 		set transmit channel
+  -f frequency  [315,434,868,915]  	set ISM band
+  -m modulation [100,250,500]           set modulation
   ```
+  
   Example,<br />
   ```
-  sudo ./RX_Demo -v -a3 -c1 -f434 -m100<br />
+  sudo ./RX_Demo -v -a3 -c1 -f434 -m100
   ```
