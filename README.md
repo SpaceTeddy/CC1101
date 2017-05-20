@@ -129,13 +129,12 @@ RX_Demo.cpp<br />
 sudo g++ -lwiringPi RX_Demo.cpp cc1100_raspi.cpp -o RX_Demo
 sudo chmod 755 RX_Demo
 ```
-<br />
+
 TX_Demo.cpp<br />
 ```
 sudo g++ -lwiringPi TX_Demo.cpp cc1100_raspi.cpp -o TX_Demo
 sudo chmod 755 TX_Demo
 ```
-<br />
 
 Command Line parameters
 -----------------------
