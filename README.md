@@ -10,7 +10,7 @@ Note: Raspi need wiringPi<br />
 Hardware connection
 ===================
 
-check cc1101_arduino.h ans/or cc1101_raspi.h for Pin description
+check cc1101_arduino.h and/or cc1101_raspi.h for Pin description
 
 CC1101 Vdd = 3.3V
 CC1101 max. digital voltage level = 3.3V (not 5V tolerant)
