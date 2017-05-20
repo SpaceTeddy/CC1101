@@ -18,13 +18,13 @@ CC1101 max. digital voltage level = 3.3V (not 5V tolerant)
 ```
 CC1101<->Arduino
 
-SI     -    MOSI (11)<br />
-SO     -    MISO (12)<br />
-CS     -    SS   (10)<br />
-SCLK   -    SCK  (13)<br />
-GDO2   -    GPIO ( 3)  <br />
-GDO0   -    not used in this demo<br />
-GND    -    GND<br />
+SI     -    MOSI (11)
+SO     -    MISO (12)
+CS     -    SS   (10)
+SCLK   -    SCK  (13)
+GDO2   -    GPIO ( 3)
+GDO0   -    not used in this demo
+GND    -    GND
 
 
 CC1101<->Raspi
