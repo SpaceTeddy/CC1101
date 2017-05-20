@@ -110,7 +110,7 @@ RF Data Bytes
 pkt_len = count of bytes which shall transfered over air (rx_addr + tx_addr + payload data)<br />
 rx_addr = address of device, which shall receive the message (0x00 = broadcast to all devices)<br />
 tx_addr = transmitter or my address. the receiver should know who has sent a message.<br />
-payload = 1 to 60 bytes for payload data.<br />
+payload = 1 to 60 bytes payload data.<br />
 
 TX Bytes example:<br />
 -> 0x06 0x03 0x01 0x00 0x01 0x02 0x03<br />
