@@ -105,15 +105,15 @@ Follow the following steps, how to store the EEPROM file (*.eep) to your Arduino
 
 RF Data Bytes
 =============
--> pkt_len [1byte]| rx_addr [1byte] | tx_addr [1byte] | payload data [1..60bytes]
+-> pkt_len [1byte] | rx_addr [1byte] | tx_addr [1byte] | payload data [1..60bytes]
 
-pkt_len = count of bytes which shall transfered over air (rx_addr + tx_addr + payload data)
-rx_addr = address of device, which shall receive the message (0x00 = broadcast to all devices)
-tx_addr = transmitter or my address. the receiver should know who has sent a message.
-payload = 1 to 60 bytes for payload data.
+pkt_len = count of bytes which shall transfered over air (rx_addr + tx_addr + payload data)<br />
+rx_addr = address of device, which shall receive the message (0x00 = broadcast to all devices)<br />
+tx_addr = transmitter or my address. the receiver should know who has sent a message.<br />
+payload = 1 to 60 bytes for payload data.<br />
 
-TX Bytes example:
--> 0x06 0x03 0x01 0x00 0x01 0x02 0x03
+TX Bytes example:<br />
+-> 0x06 0x03 0x01 0x00 0x01 0x02 0x03<br />
 
 Basic configuration
 ===================
@@ -131,19 +131,19 @@ Modulation modes
 
 the following modulation modes can be set by void CC1100::set_mode(uint8_t mode) . Transmitter and receiver must have the same Mode setting.
 
-1 = GFSK_1_2_kb
-2 = GFSK_38_4_kb
-3 = GFSK_100_kb
-4 = MSK_250_kb
-5 = MSK_500_kb
-6 = OOK_4_8_kb
+1 = GFSK_1_2_kb<br />
+2 = GFSK_38_4_kb<br />
+3 = GFSK_100_kb<br />
+4 = MSK_250_kb<br />
+5 = MSK_500_kb<br />
+6 = OOK_4_8_kb<br />
 
 ISM frequency band
 ------------------
 
 you can set a frequency operation band by void CC1100::set_ISM(uint8_t ism_freq) to make it compatible with your hardware.
 
-1 = 315
-2 = 433
-3 = 868
-4 = 915
+1 = 315<br />
+2 = 433<br />
+3 = 868<br />
+4 = 915<br />
