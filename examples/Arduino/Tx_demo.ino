@@ -42,7 +42,7 @@ void setup()
   
   cc1100.sidle();                          //set to ILDE first
   cc1100.set_mode(0x04);                   //set modulation array mode
-  cc1100.set_ISM(0x03);                    //set frequency
+  cc1100.set_ISM(0x02);                    //set ISM Band 1=315MHz; 2=433MHz; 3=868MHz; 4=915MHz
   cc1100.set_channel(0x01);                //set channel
   cc1100.set_output_power_level(0);        //set PA level in dbm
   cc1100.set_myaddr(0x01);                 //set my own address
