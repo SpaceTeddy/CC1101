@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     			
     			if( res == 1)    //sents package over air. ACK is received via GPIO polling
     			{
-    				printf("transmitted tx_timestamp: %ums \r\n\r\n", millis());
+    				printf("transmitted tx_timestamp: %ums \r\n\r\n", time_stamp);
 				}
 			prev_millis_1s_timer = millis();
   		}
