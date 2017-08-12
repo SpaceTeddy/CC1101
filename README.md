@@ -5,6 +5,13 @@ driver library for Ti CC1100 / CC1101.<br />
 Contains Lib for Arduino and Raspberry Pi.<br />
 Note: Raspi need wiringPi<br />
 
+Donation
+========
+
+If you are happy with that library and you want to
+to spend me a beer, please feel free to use the following link. ;)
+
+https://www.paypal.me/bringmichzumschotter
 
 
 Hardware connection
