@@ -8,8 +8,8 @@ Note: Raspi need wiringPi<br />
 Donation
 ========
 
-If you are happy with that library and you want to
-to spend me a beer, please feel free to use the following link. ;)
+If you are happy with the library and you want to
+spend me a beer, please feel free to use the following link. ;)
 
 https://www.paypal.me/bringmichzumschotter
 
