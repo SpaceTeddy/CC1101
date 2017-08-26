@@ -484,7 +484,7 @@ void CC1100::show_main_settings(void)
 //----------------------------------[idle mode]--------------------------------
 uint8_t CC1100::sidle(void)
 {
-     uint8_t marcstate, i;
+     uint8_t marcstate;
      
      spi_write_strobe(SIDLE);                                //sets to idle first. must be in
      
@@ -504,7 +504,7 @@ uint8_t CC1100::sidle(void)
 //--------------------------------[transmit mode]------------------------------
 uint8_t CC1100::transmit(void)
 {
-     uint8_t marcstate, i;
+     uint8_t marcstate;
      
      spi_write_strobe(STX);                                  //sends the data over air
      
@@ -524,7 +524,7 @@ uint8_t CC1100::transmit(void)
 //---------------------------------[receive mode]------------------------------
 uint8_t CC1100::receive(void)
 {
-     uint8_t marcstate, i;
+     uint8_t marcstate;
 
      sidle();                                               //sets to idle first.
      spi_write_strobe(SRX);                                 //writes receive strobe (receive mode)
@@ -742,7 +742,7 @@ uint8_t CC1100::check_acknolage(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sende
 {
 
      if((pktlen == 0x05 && \
-         rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS) && \
+        (rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS)) && \
          rxbuffer[2] == sender && \
          rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k')   //acknolage received!
      {
