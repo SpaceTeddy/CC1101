@@ -568,7 +568,7 @@ void CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
 {
      uint8_t bytes_in_RXFIFO = spi_read_register(RXBYTES);       //reads the number of bytes in RXFIFO
 
-     if (bytes_in_RXFIFO & 0x7F && !(bytes_in_RXFIFO & 0x80))
+     if ((bytes_in_RXFIFO & 0x7F) && !(bytes_in_RXFIFO & 0x80))
      {
           pktlen = spi_read_register(RXFIFO_SINGLE_BYTE);        //received pktlen +1 for complete TX buffer
           rxbuffer[0] = pktlen;
