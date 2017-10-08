@@ -10,9 +10,6 @@
 
 
 //**************************** pins ******************************************//
-//#define SCK_PIN  13
-//#define MISO_PIN 12
-//#define MOSI_PIN 11
 #define SS_PIN   10
 #define GDO2	  6
 #define GDO0	 99
@@ -20,10 +17,10 @@
 /*----------------------[CC1100 - misc]---------------------------------------*/
 #define CRYSTAL_FREQUENCY         26000000
 #define CFG_REGISTER              0x2F  //47 registers
-#define FIFOBUFFER                0x42  //size of Fifo Buffer
+#define FIFOBUFFER                0x42  //size of Fifo Buffer +2 for rssi and lqi
 #define RSSI_OFFSET_868MHZ        0x4E  //dec = 74
 #define TX_RETRIES_MAX            0x05  //tx_retries_max
-#define ACK_TIMEOUT                100  //ACK timeout in ms
+#define ACK_TIMEOUT                250  //ACK timeout in ms
 #define CC1100_COMPARE_REGISTER   0x00  //register compare 0=no compare 1=compare
 #define BROADCAST_ADDRESS         0x00  //broadcast address
 #define CC1100_FREQ_315MHZ        0x01
@@ -143,6 +140,11 @@ class CC1100
         uint8_t spi_putc(uint8_t data);
 
     public:
+        uint8_t debug_level;
+
+        uint8_t set_debug_level(uint8_t set_debug_level);
+        uint8_t get_debug_level(void);
+
         uint8_t begin(volatile uint8_t &My_addr);
         void end(void);
 
@@ -156,6 +158,11 @@ class CC1100
         void reset(void);
         void wakeup(void);
         void powerdown(void);
+
+        void wor_enable(void);
+        void wor_disable(void);
+        void wor_reset(void);
+
         uint8_t sidle(void);
         uint8_t transmit(void);
         uint8_t receive(void);
@@ -166,7 +173,7 @@ class CC1100
         uint8_t packet_available();
         uint8_t wait_for_packet(uint8_t milliseconds);
 
-        uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx,uint8_t &my_addr,
+        uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx, uint8_t &my_addr,
                                       uint8_t &sender, int8_t &rssi_dbm, uint8_t &lqi);
 
         void tx_payload_burst(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer, uint8_t length);
