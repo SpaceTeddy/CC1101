@@ -1,7 +1,10 @@
 /*-----------------------------------------------------------------------------
 '                       CC1101_RX_Demo_WOR
 '                       ------------------
-'
+'  - needs PinChangeInt library
+'  - *.eep file must flashed to Arduino first -> use eeprom Tool
+'  - put cc1100_arduino.h in your sketch folder. dont't install it as library 
+'    for this example.
 '  
 '-----------------------------------------------------------------------------*/
 #include <avr/sleep.h>
