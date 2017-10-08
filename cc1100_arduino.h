@@ -27,7 +27,7 @@
 #define FIFOBUFFER                0x42  //size of Fifo Buffer
 #define RSSI_OFFSET_868MHZ        0x4E  //dec = 74
 #define TX_RETRIES_MAX            0x05  //tx_retries_max
-#define ACK_TIMEOUT                100      //ACK timeout in ms
+#define ACK_TIMEOUT                250  //ACK timeout in ms
 #define CC1100_COMPARE_REGISTER   0x00  //register compare 0=no compare 1=compare
 #define BROADCAST_ADDRESS         0x00  //broadcast address
 #define CC1100_FREQ_315MHZ        0x01
@@ -165,6 +165,11 @@ class CC1100
         void reset(void);
         void wakeup(void);
         void powerdown(void);
+
+        void wor_enable(void);
+        void wor_disable(void);
+        void wor_reset(void);
+
         uint8_t sidle(void);
         uint8_t transmit(void);
         uint8_t receive(void);
