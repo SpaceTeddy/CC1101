@@ -16,8 +16,6 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-
-extern uint8_t cc1100_debug;
 //-------------------[global default settings 868 Mhz]---------------------------------
 
 static uint8_t cc1100_GFSK_1_2_kb[CFG_REGISTER] = {
@@ -45,7 +43,7 @@ static uint8_t cc1100_GFSK_1_2_kb[CFG_REGISTER] = {
                     0x15,  // DEVIATN       Modem Deviation Setting
                     0x07,  // MCSM2         Main Radio Control State Machine Configuration
                     0x0C,  // MCSM1         Main Radio Control State Machine Configuration
-                    0x19,  // MCSM0         Main Radio Control State Machine Configuration
+                    0x18,  // MCSM0         Main Radio Control State Machine Configuration
                     0x16,  // FOCCFG        Frequency Offset Compensation Configuration
                     0x6C,  // BSCFG         Bit Synchronization Configuration
                     0x03,  // AGCCTRL2      AGC Control
@@ -95,7 +93,7 @@ static uint8_t cc1100_GFSK_38_4_kb[CFG_REGISTER] = {
                     0x34,  // DEVIATN       Modem Deviation Setting
                     0x07,  // MCSM2         Main Radio Control State Machine Configuration
                     0x0C,  // MCSM1         Main Radio Control State Machine Configuration
-                    0x19,  // MCSM0         Main Radio Control State Machine Configuration
+                    0x18,  // MCSM0         Main Radio Control State Machine Configuration
                     0x16,  // FOCCFG        Frequency Offset Compensation Configuration
                     0x6C,  // BSCFG         Bit Synchronization Configuration
                     0x43,  // AGCCTRL2      AGC Control
@@ -361,18 +359,34 @@ void CC1100::wakeup(void)
 }
 //-------------------------------------[end]-----------------------------------
 
+//---------------------[CC1100 set debug level]---------------------------------
+uint8_t CC1100::set_debug_level(uint8_t set_debug_level = 1)  //default ON
+{
+    debug_level = set_debug_level;        //set debug level of CC1101 outputs
+
+    return debug_level;
+}
+//-----------------------------[end]--------------------------------------------
+
+//---------------------[CC1100 get debug level]---------------------------------
+uint8_t CC1100::get_debug_level(void)
+{
+    return debug_level;
+}
+//-----------------------------[end]--------------------------------------------
+
 //----------------------------[CC1100 init functions]--------------------------
 uint8_t CC1100::begin(volatile uint8_t &My_addr)
 {
      uint8_t partnum, version;
-
      extern int cc1100_freq_select, cc1100_mode_select, cc1100_channel_select;
 
-
      pinMode(GDO2, INPUT);
-     
-     if (cc1100_debug == 1) {
-          printf("Init CC1100...\r\n");
+
+     set_debug_level(set_debug_level());     //set debug level of CC1101 outputs
+
+     if (debug_level > 0) {
+          printf("Init CC1101...\r\n");
      }
 
      spi_begin();
@@ -387,14 +401,15 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
      //checks if valid Chip ID is found. Usualy 0x03 or 0x14. if not -> abort
      if(version == 0x00 || version == 0xFF)
      {
-          if (cc1100_debug == 1) {
+          if (debug_level > 0) {
               printf("no CC11xx found!\r\n");
           }
+          end();
 
           return FALSE;
      }
 
-     if (cc1100_debug == 1) {
+     if (debug_level > 0) {
           printf("Partnumber: 0x%02X\r\n", partnum);
           printf("Version   : 0x%02X\r\n", version);
      }
@@ -414,21 +429,14 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
      //set my receiver address
      set_myaddr(My_addr);                        //My_Addr from EEPROM to global variable
 
-     //show register settings
-     //show_register_settings();
-     
-     //show main settings
-     //show_main_settings();
-
-     if (cc1100_debug == 1) {
+     if (debug_level > 0) {
           printf("...done!\r\n");
      }
 
      receive();                                  //set CC1100 in receive mode
-     
+
      return TRUE;
 }
-
 //-------------------------------------[end]-----------------------------------
 
 void CC1100::end(void)
@@ -456,7 +464,7 @@ void CC1100::show_register_settings(void)
                printf("\r\n");
           }
      }
-     
+
      printf("\r\n");
      printf("PaTable:\r\n");
 
@@ -485,18 +493,18 @@ void CC1100::show_main_settings(void)
 uint8_t CC1100::sidle(void)
 {
      uint8_t marcstate;
-     
+
      spi_write_strobe(SIDLE);                                //sets to idle first. must be in
-     
+
      marcstate = 0xFF;                                       //set unknown/dummy state value
-     
+
      while(marcstate != 0x01)                                //0x01 = SILDE
      {
           marcstate = (spi_read_register(MARCSTATE) & 0x1F); //read out state of cc1100 to be sure in RX
           //printf("marcstate_rx: 0x%02X\r", marcstate);
      }
      //Serial.println();
-     
+
      return TRUE;
 }
 //-------------------------------------[end]-----------------------------------
@@ -505,9 +513,10 @@ uint8_t CC1100::sidle(void)
 uint8_t CC1100::transmit(void)
 {
      uint8_t marcstate;
-     
+
+     sidle();
      spi_write_strobe(STX);                                  //sends the data over air
-     
+
      marcstate = 0xFF;                                       //set unknown/dummy state value
 
      while(marcstate != 0x01)                                //0x01 = ILDE after sending data
@@ -528,7 +537,7 @@ uint8_t CC1100::receive(void)
 
      sidle();                                               //sets to idle first.
      spi_write_strobe(SRX);                                 //writes receive strobe (receive mode)
-     
+
      marcstate = 0xFF;                                      //set unknown/dummy state value
 
      while(marcstate != 0x0D)                               //0x0D = RX 
@@ -537,10 +546,56 @@ uint8_t CC1100::receive(void)
           //printf("marcstate_rx: 0x%02X\r", marcstate);
      }
      //printf("\r\n");
-     
+
      return TRUE;
 }
 //-------------------------------------[end]-----------------------------------
+
+//------------[enables WOR Mode  EVENT0 ~1890ms; rx_timeout ~235ms]--------------------
+void CC1100::wor_enable()
+{
+/*
+    EVENT1 = WORCTRL[6:4] -> Datasheet page 88
+    EVENT0 = (750/Xtal)*(WOREVT1<<8+WOREVT0)*2^(5*WOR_RES) = (750/26Meg)*65407*2^(5*0) = 1.89s
+
+                        (WOR_RES=0;RX_TIME=1)               -> Datasheet page 80
+    RX_TIMEOUT = EVENT0*       (3.6038)      *26/26Meg = 235.8ms
+*/
+    sidle();
+
+    spi_write_register(MCSM0, 0x18);    //FS Autocalibration
+    spi_write_register(MCSM2, 0x00);    //MCSM2.RX_TIME = 0b
+
+    // configure EVENT0 time
+    spi_write_register(WOREVT1, 0xFF);  //High byte Event0 timeout
+    spi_write_register(WOREVT0, 0x7F);  // Low byte Event0 timeout
+
+    // configure EVENT1 time
+    spi_write_register(WORCTRL, 0x78);  //WOR_RES=0b; tEVENT1=0111b=48d -> 48*(750/26MHz)= 1.385ms
+
+    spi_write_strobe(SFRX);             //flush RX buffer
+    spi_write_strobe(SWORRST);          //resets the WOR timer to the programmed Event 1
+    spi_write_strobe(SWOR);             //put the radio in WOR mode when CSn is released
+}
+//-------------------------------[end]------------------------------------------
+
+//------------------------[disable WOR Mode]-------------------------------------
+void CC1100::wor_disable()
+{
+    sidle();                            //exit WOR Mode
+    spi_write_register(MCSM2, 0x07);    //stay in RX. No RX timeout
+}
+//-------------------------------[end]------------------------------------------
+
+//------------------------[resets WOR Timer]------------------------------------
+void CC1100::wor_reset()
+{
+    sidle();                            //go to IDLE
+    spi_write_strobe(SFRX);             //flush RX buffer
+    spi_write_strobe(SWORRST);          //resets the WOR timer to the programmed Event 1
+    spi_write_strobe(SWOR);             //put the radio in WOR mode when CSn is released
+}
+//-------------------------------[end]------------------------------------------
 
 //-------------------------------[tx_payload_burst]----------------------------
 void CC1100::tx_payload_burst(uint8_t my_addr,uint8_t rx_addr, uint8_t *txbuffer, uint8_t length)
@@ -551,7 +606,7 @@ void CC1100::tx_payload_burst(uint8_t my_addr,uint8_t rx_addr, uint8_t *txbuffer
 
      spi_write_burst(TXFIFO_BURST,txbuffer,length);         //writes TX_Buffer +1 because of pktlen must be also transfered
 
-     if (cc1100_debug == 1) {
+     if (debug_level > 0) {
           printf("TX_FIFO: ");
           for(uint8_t i = 0 ; i < length; i++)              //TX_fifo debug out
           {
@@ -566,17 +621,14 @@ void CC1100::tx_payload_burst(uint8_t my_addr,uint8_t rx_addr, uint8_t *txbuffer
 //---------------------[rx_payload_burst - package received]-------------------
 void CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
 {
-     uint8_t bytes_in_RXFIFO = spi_read_register(RXBYTES);       //reads the number of bytes in RXFIFO
+     uint8_t bytes_in_RXFIFO = spi_read_register(RXBYTES);           //reads the number of bytes in RXFIFO
 
-     if ((bytes_in_RXFIFO & 0x7F) && !(bytes_in_RXFIFO & 0x80))
+     if(bytes_in_RXFIFO & 0x7F && !(bytes_in_RXFIFO & 0x80))
      {
-          pktlen = spi_read_register(RXFIFO_SINGLE_BYTE);        //received pktlen +1 for complete TX buffer
-          rxbuffer[0] = pktlen;
-          for(uint8_t i = 1;i < pktlen + 3;i++)                  //+3 because of i=1 and RSSI and LQI
-          {
-               rxbuffer[i] = spi_read_register(RXFIFO_SINGLE_BYTE);
-          }
+          spi_read_burst(RXFIFO_BURST, rxbuffer, bytes_in_RXFIFO);
+          pktlen = rxbuffer[0];
      }
+
      sidle();
      spi_write_strobe(SFRX);delayMicroseconds(100);
      receive();
@@ -587,10 +639,17 @@ void CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
 uint8_t CC1100::sent_packet(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer,\
                             uint8_t pktlen,  uint8_t tx_retries)
 {
-     uint8_t pktlen_ack;                                         //default package len for ACK
+     uint8_t pktlen_ack, rssi, lqi;                              //default package len for ACK
      uint8_t rxbuffer[FIFOBUFFER];
      uint8_t tx_retries_count = 0;
+     uint8_t from_sender;
      uint16_t ackWaitCounter = 0;
+
+     if(pktlen > (FIFOBUFFER - 1))
+     {
+          printf("ERROR: package size overflow\r\n");
+          return FALSE;
+     }
 
      do                                                          //sent package out with retries
      {
@@ -599,44 +658,44 @@ uint8_t CC1100::sent_packet(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer,
           receive();                                             //receive mode
 
           if(rx_addr == BROADCAST_ADDRESS /*|| tx_retries == 0*/)
-          {                                  //no wait acknowge if sent to broadcast address or tx_retries = 0
-               if (cc1100_debug == 1)
-               { 
+          {                                                      //no wait acknowge if sent to broadcast address or tx_retries = 0
+               if (debug_level > 0)
+               {
                     printf("fire & forget\r\n");
                }
-                    return TRUE;                            //successful sent to BROADCAST_ADDRESS
+               return TRUE;                                      //successful sent to BROADCAST_ADDRESS
           }
 
-          while (ackWaitCounter < ACK_TIMEOUT )             //Wait for an acknowge
+          while (ackWaitCounter < ACK_TIMEOUT )                  //Wait for an acknowge
           {
-               if (packet_available() == TRUE)              //if RF package received check package acknowge
+               if (packet_available() == TRUE)                   //if RF package received check package acknowge
                {
-                    uint8_t from_sender = rx_addr;          //the original message sender address
+                    from_sender = rx_addr;                       //the original message sender address
                     rx_fifo_erase(rxbuffer);
-                    rx_payload_burst(rxbuffer, pktlen_ack); //reads package in buffer
+                    rx_payload_burst(rxbuffer, pktlen_ack);      //reads package in buffer
                     check_acknolage(rxbuffer, pktlen_ack, from_sender, my_addr);
-                    return TRUE;                            //package successfully sent
+
+                    return TRUE;                                 //package successfully sent
                }
                else
                {
-                    ackWaitCounter++;                       //increment ACK wait counter
-                    delay(1);                               //delay to give receiver time
+                    ackWaitCounter++;                            //increment ACK wait counter
+		    delay(1);                                    //delay to give receiver time
                }
           }
 
-          ackWaitCounter = 0;                               //resets the ACK_Timeout
-          tx_retries_count++;                               //increase tx retry counter
+          ackWaitCounter = 0;                                    //resets the ACK_Timeout
+          tx_retries_count++;                                    //increase tx retry counter
 
-          if (cc1100_debug == 1)
-          { 
+          if (debug_level > 0)
+          {
                printf(" #:");
                printf("0x%02X \r\n", tx_retries_count);
           }
 
-     }while(tx_retries_count <= tx_retries);                //while count of retries is reaches
+     }while(tx_retries_count <= tx_retries);                     //while count of retries is reaches
 
-     //printf("sent package failed \r\n");
-     return FALSE;                                          //sent failed. too many retries
+     return FALSE;                                               //sent failed. too many retries
 }
 //-------------------------------------[end]-----------------------------------
 
@@ -652,7 +711,7 @@ void CC1100::sent_acknolage(uint8_t my_addr, uint8_t tx_addr)
      transmit();                                                                                                             //sent package over the air
      receive();                                                                                                              //set CC1100 in receive mode
 
-     if (cc1100_debug == 1) {
+     if (debug_level > 0) {
           printf("Ack_sent!\r\n");
      }
 }
@@ -669,11 +728,11 @@ uint8_t CC1100::packet_available()
                };                                                  //for sync word receive
           }
 
-          if (cc1100_debug == 1) {
+          if (debug_level > 0) {
                //printf("Pkt->:\r\n");
           }
 
-               return TRUE;
+          return TRUE;
      }
      return FALSE;
 }
@@ -683,17 +742,20 @@ uint8_t CC1100::packet_available()
 uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_addr,\
                             uint8_t &sender, int8_t &rssi_dbm, uint8_t &lqi)
 {
-     rx_fifo_erase(rxbuffer);                                      //delete rx_fifo bufffer
-     rx_payload_burst(rxbuffer, pktlen);                           //read package in buffer
+     uint8_t crc;
 
-     if(pktlen == 0x00)                                            //packet len not plausible?
+     rx_fifo_erase(rxbuffer);                                 //delete rx_fifo bufffer
+     rx_payload_burst(rxbuffer, pktlen);                      //read package in buffer
+
+     if(pktlen == 0x00)                                       //packet len not plausible?
      {
-          if (cc1100_debug == 1) {
+          if (debug_level > 0) {
                //printf("bad packet!\r\n");
           }
           return FALSE;
      }
-     my_addr = rxbuffer[1];                                        //set receiver address to my_addr
+
+     my_addr = rxbuffer[1];                                   //set receiver address to my_addr
      sender = rxbuffer[2];
 
      if(check_acknolage(rxbuffer, pktlen, sender, my_addr) == TRUE)//acknowlage received?
@@ -702,21 +764,24 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
      }
      else                                                     //real data, and sent acknowladge
      {
-          rssi_dbm = rssi_convert(rxbuffer[pktlen + 1]);      //converts receiver strength to dBm
+          rssi_dbm = rssi_convert(rxbuffer[pktlen + 1]);
           lqi = lqi_convert(rxbuffer[pktlen + 2]);
-          uint8_t crc = check_crc(lqi);                       //get rf quialtiy indicator
+          crc = check_crc(lqi);
 
-          if (cc1100_debug == 1) 
+          if (debug_level > 0)
           {                                                   //debug output messages
                if(rxbuffer[1] == BROADCAST_ADDRESS)           //if my receiver address is BROADCAST_ADDRESS
                {
                     printf("BROADCAST message\r\n");
                }
                printf("RX_FIFO:");
-               for(uint8_t i = 0 ; i < pktlen + 3; i++)       //showes rx_buffer for debug
+
+               for(uint8_t i = 0 ; i < pktlen + 1; i++)       //showes rx_buffer for debug
                {
                     printf("0x%02X ", rxbuffer[i]);
-               } printf("\r\n");
+               }
+               printf("| 0x%02X 0x%02X |", rxbuffer[pktlen+1], rxbuffer[pktlen+2]);
+               printf("\r\n");
 
                printf("RSSI:%d ", rssi_dbm);
                printf("LQI:");printf("0x%02X ", lqi);
@@ -731,7 +796,7 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
           {
                sent_acknolage(my_addr, sender);               //sending acknolage to sender!
           }
-          
+
           return TRUE;
      }
 }
@@ -740,24 +805,26 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
 //--------------------------------[check ACKNOLAGE]----------------------------
 uint8_t CC1100::check_acknolage(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr)
 {
+     int8_t rssi_dbm;
+     uint8_t crc, lqi;
 
      if((pktlen == 0x05 && \
-        (rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS)) && \
+         rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS) && \
          rxbuffer[2] == sender && \
          rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k')   //acknolage received!
      {
           if(rxbuffer[1] == BROADCAST_ADDRESS)       //if receiver address BROADCAST_ADDRESS skip acknolage
           {
-               if (cc1100_debug == 1) {
+               if (debug_level > 0) {
                    printf("BROADCAST ACK\r\n");
                }
                return FALSE;
           }
-          int8_t rssi_dbm = rssi_convert(rxbuffer[pktlen + 1]);
-          uint8_t lqi = lqi_convert(rxbuffer[pktlen + 2]);
-          uint8_t crc = check_crc(lqi);
+          rssi_dbm = rssi_convert(rxbuffer[pktlen+1]);
+          lqi = lqi_convert(rxbuffer[pktlen+2]);
+          crc = check_crc(lqi);
 
-          if(cc1100_debug == 1){
+          if(debug_level > 0){
                printf("ACK! ");
                printf("RSSI:%i ",rssi_dbm);
                printf("LQI:0x%02X ",lqi);
@@ -780,15 +847,9 @@ uint8_t CC1100::wait_for_packet(uint8_t milliseconds)
                {
                     return TRUE;
                }
-               else if(i == milliseconds) 
-               {
-                    if(cc1100_debug == 1){
-                         printf("no packet received!\r\n");
-                         return FALSE;
-                    }
-               }
+
           }
-     return TRUE;
+     return FALSE;;
 }
 //-------------------------------------[end]-----------------------------------
 
@@ -822,10 +883,10 @@ void CC1100::set_channel(uint8_t channel)
 }
 //-------------------------------------[end]-----------------------------------
 
-//-------------------------------[set transmit mode]---------------------------
+//-[set modulation mode 1 = GFSK_1_2_kb; 2 = GFSK_38_4_kb; 3 = GFSK_100_kb; 4 = MSK_250_kb; 5 = MSK_500_kb; 6 = OOK_4_8_kb]-
 void CC1100::set_mode(uint8_t mode)
 {
-     switch (mode)                                    //loads the RF mode which is defined in cc1100_mode_select
+     switch (mode)          //loads the RF mode which is defined in cc1100_mode_select
      {
           case 0x01:
                          spi_write_burst(WRITE_BURST,cc1100_GFSK_1_2_kb,CFG_REGISTER);
@@ -853,7 +914,7 @@ void CC1100::set_mode(uint8_t mode)
 }
 //-------------------------------------[end]-----------------------------------
 
-//---------------------------------[set ISM Band]------------------------------
+//---------[set ISM Band 1=315MHz; 2=433MHz; 3=868MHz; 4=915MHz]----------------
 void CC1100::set_ISM(uint8_t ism_freq)
 {
      uint8_t freq2, freq1, freq0;
@@ -1089,12 +1150,12 @@ void CC1100::spi_begin(void)
      //printf ("init SPI bus... ");
      if ((x = wiringPiSPISetup (0, 8000000)) < 0)  //4MHz SPI speed
      {
-          if(cc1100_debug == 1){
+          if(debug_level > 0){
           printf ("ERROR: wiringPiSPISetup failed!\r\n");
           }
      }
      else{
-          if(cc1100_debug == 1){
+          if(debug_level > 0){
           //printf ("wiringSPI is up\r\n");
           }
      }
