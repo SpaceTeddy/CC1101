@@ -84,7 +84,7 @@ void loop()
     rf_timecode_backup = millis();
     
     if(cc1100_wor_enable_flag == 0){              //enable WOR mode after 5 seconds if WOR is not enabled
-      cc1100.wor_enable();                        
+      cc1100.wor_reset();                        
       cc1100_wor_enable_flag = 1;                 //set WOR flag
     }
     
