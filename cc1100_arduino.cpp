@@ -623,6 +623,7 @@ void CC1100::wor_disable()
 void CC1100::wor_reset()
 {
     sidle();                            //go to IDLE
+    spi_write_register(MCSM2, 0x00);    //MCSM2.RX_TIME = 0b
     spi_write_strobe(SFRX);             //flush RX buffer
     spi_write_strobe(SWORRST);          //resets the WOR timer to the programmed Event 1
     spi_write_strobe(SWOR);             //put the radio in WOR mode when CSn is released
