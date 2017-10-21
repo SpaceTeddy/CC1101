@@ -90,10 +90,9 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 			break;
-			case 'm':
-				cc1100_mode_select = atoi (optarg);
-
-				switch(cc1100_mode_select){
+		case 'm':
+			cc1100_mode_select = atoi (optarg);
+			switch(cc1100_mode_select){
 				case 1:
 					cc1100_mode_select = 1;
 					break;
@@ -112,13 +111,13 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 				break;
-				case ':':
-					fprintf(stderr, "%s: Error - Option `%c' needs a value\n\n", PACKAGE, optopt);
-					print_help(1);
-					break;
-				case '?':
-					fprintf(stderr, "%s: Error - No such option: `%c'\n\n", PACKAGE, optopt);
-					print_help(1);
+		case ':':
+				fprintf(stderr, "%s: Error - Option `%c' needs a value\n\n", PACKAGE, optopt);
+				print_help(1);
+				break;
+		case '?':
+				fprintf(stderr, "%s: Error - No such option: `%c'\n\n", PACKAGE, optopt);
+				print_help(1);
 		}
 	}
 
