@@ -678,12 +678,11 @@ uint8_t CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
         if(debug_level > 0){
             Serial.print(F("no bytes in RX buffer or RX Overflow!: "));Serial.println(bytes_in_RXFIFO);
         }
+        sidle();                                                  //set to IDLE
+        spi_write_strobe(SFRX);delayMicroseconds(100);            //flush RX Buffer
+        receive();                                                //set to receive mode
         res = FALSE;
     }
-
-    sidle();                                                  //set to IDLE
-    spi_write_strobe(SFRX);delayMicroseconds(100);            //flush RX Buffer
-    receive();                                                //set to receive mode
 
     return res;
 }
