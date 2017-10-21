@@ -662,7 +662,8 @@ uint8_t CC1100::tx_payload_burst(uint8_t my_addr, uint8_t rx_addr,
 //------------------[rx_payload_burst - package received]-----------------------
 uint8_t CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
 {
-    uint8_t bytes_in_RXFIFO;
+    uint8_t bytes_in_RXFIFO = 0;
+    uint8_t res = 0;
 
     bytes_in_RXFIFO = spi_read_register(RXBYTES);              //reads the number of bytes in RXFIFO
 
@@ -670,19 +671,21 @@ uint8_t CC1100::rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen)
     {
         spi_read_burst(RXFIFO_BURST, rxbuffer, bytes_in_RXFIFO);
         pktlen = rxbuffer[0];
-        return TRUE;
+        res = TRUE;
     }
     else
     {
         if(debug_level > 0){
-            Serial.print(F("no bytes in RX buffer or RX Overflow!: "));Serial.println(bytes_in_RXFIFO);
+            printf("no bytes in RX buffer or RX Overflow!: ");printf("0x%02X \r\n", bytes_in_RXFIFO);
         }
-        return FALSE;
+        res = FALSE;
     }
 
     sidle();                                                  //set to IDLE
     spi_write_strobe(SFRX);delayMicroseconds(100);            //flush RX Buffer
     receive();                                                //set to receive mode
+    
+    return res;
 }
 //-------------------------------[end]------------------------------------------
 
