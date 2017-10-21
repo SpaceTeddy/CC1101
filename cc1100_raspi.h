@@ -11,8 +11,8 @@
 
 //**************************** pins ******************************************//
 #define SS_PIN   10
-#define GDO2	  6
-#define GDO0	 99
+#define GDO2      6
+#define GDO0     99
 
 /*----------------------[CC1100 - misc]---------------------------------------*/
 #define CRYSTAL_FREQUENCY         26000000
@@ -36,7 +36,6 @@
 #define WRITE_BURST         0x40
 #define READ_SINGLE_BYTE    0x80
 #define READ_BURST          0xC0
-
 /*---------------------------[END R/W offsets]--------------------------------*/
 
 /*------------------------[CC1100 - FIFO commands]----------------------------*/
@@ -135,6 +134,7 @@
 class CC1100
 {
     private:
+
         void spi_begin(void);
         void spi_end(void);
         uint8_t spi_putc(uint8_t data);
@@ -173,11 +173,11 @@ class CC1100
         uint8_t packet_available();
         uint8_t wait_for_packet(uint8_t milliseconds);
 
-        uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx, uint8_t &my_addr,
+        uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx,uint8_t &my_addr,
                                       uint8_t &sender, int8_t &rssi_dbm, uint8_t &lqi);
 
-        void tx_payload_burst(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer, uint8_t length);
-        void rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen);
+        uint8_t tx_payload_burst(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer, uint8_t length);
+        uint8_t rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen);
 
         void rx_fifo_erase(uint8_t *rxbuffer);
         void tx_fifo_erase(uint8_t *txbuffer);
