@@ -1,16 +1,16 @@
 /*-----------------------------------------------------------------------------
-'                     TX DEMO
+'                     TX_DEMO
 '                     -------
-'
-'
-'  - need PinChangeInt library
+'  - needs EnableInterrupt (former PinChangeInt) library
 '  - *.eep file must flashed to Arduino first -> use eeprom Tool
 '  - put cc1100_arduino.h in your sketch folder. dont't install it as library 
 '    for this example.
-'
+'  
+'  
 '-----------------------------------------------------------------------------*/
-#include "cc1100_arduino.h"
-#include <PinChangeInt.h>
+#include <avr/sleep.h>
+#include <cc1100.h>
+#include <EnableInterrupt.h>
 
 //---------------------------=[Global variables]=----------------------------
 
@@ -35,26 +35,28 @@ CC1100 cc1100;
 void setup() 
 {
   // init serial Port for debugging
-  Serial.begin(38400);Serial.println();
+  Serial.begin(115200);Serial.println();
   
   // init CC1101 RF-module and get My_address from EEPROM
   cc1100.begin(My_addr);                   //inits RF module with main default settings
   
   cc1100.sidle();                          //set to ILDE first
   cc1100.set_mode(0x04);                   //set modulation mode 1 = GFSK_1_2_kb; 2 = GFSK_38_4_kb; 3 = GFSK_100_kb; 4 = MSK_250_kb; 5 = MSK_500_kb; 6 = OOK_4_8_kb
-  cc1100.set_ISM(0x02);                    //set ISM Band 1=315MHz; 2=433MHz; 3=868MHz; 4=915MHz
+  cc1100.set_ISM(0x02);                    //set frequency 1=315MHz; 2=433MHz; 3=868MHz; 4=915MHz
   cc1100.set_channel(0x01);                //set channel
   cc1100.set_output_power_level(0);        //set PA level in dbm
   cc1100.set_myaddr(0x01);                 //set my own address
   
-  cc1100.spi_write_register(IOCFG2, 0x06); //set module in sync mode detection mode
+  //cc1100.spi_write_register(IOCFG2, 0x06); //set module in sync mode detection mode
+  //cc1100.set_modulation_type(7);           //set Modulation type 2-FSK=0; GFSK=1; ASK/OOK=3; 4-FSK=4; MSK=7
+  //cc1100.set_datarate(0x8b, 0xf8, 0x44);   //set datarate parameters, calculated by python tool
   
   cc1100.show_main_settings();             //shows setting debug messages to UART
   cc1100.show_register_settings();         //shows current CC1101 register values
   cc1100.receive();                        //set to RECEIVE mode
 
   // init interrrupt function for available packet
-  attachPinChangeInterrupt(GDO2, rf_available_int, HIGH);
+  enableInterrupt(GDO2, rf_available_int, RISING); 
   
   Serial.println(F("CC1101 TX Demo"));   //welcome message
 }
@@ -75,11 +77,11 @@ void loop()
     Tx_fifo[6] = (uint8_t)(time_stamp);
 
     Pktlen = 0x07;                                               //set packet len to 0x13
-   
-    detachPinChangeInterrupt(GDO2);                              //disable pin change interrupt
-    cc1100.sent_packet(My_addr, Rx_addr, Tx_fifo, Pktlen, 1);    //sents package over air. ACK is received via GPIO polling
-    attachPinChangeInterrupt(GDO2, rf_available_int, HIGH);      //enable pin change interrupt           
 
+    detachPinChangeInterrupt(GDO2);                              //disable pin change interrupt
+    cc1100.sent_packet(My_addr, Rx_addr, Tx_fifo, Pktlen, 40);   //sents package over air. ACK is received via GPIO polling    
+    attachPinChangeInterrupt(GDO2, rf_available_int, RISING);    //enable pin change interrupt           
+    
     Serial.print(F("tx_time: "));Serial.print(millis()-time_stamp);Serial.println(F("ms"));
     prev_millis_1s_timer = millis();
   }
@@ -91,12 +93,18 @@ void loop()
 //---------------------[ check incomming RF packet ]-----------------------
 void rf_available_int(void) 
 {
-  detachPinChangeInterrupt(GDO2);
+  disableInterrupt(GDO2);
   
   if(cc1100.packet_available() == TRUE){
-    cc1100.get_payload(Rx_fifo, pktlen, rx_addr, sender, rssi_dbm, lqi); //stores the payload data to Rx_fifo
-    cc1101_packet_available = TRUE;                                      //set flag that an package is in RX buffer
+    if(cc1100.get_payload(Rx_fifo, pktlen, rx_addr, sender, rssi_dbm, lqi) == TRUE) //stores the payload data to Rx_fifo
+    {
+        cc1101_packet_available = TRUE;                                //set flag that a package is in RX buffer
+    }
+    else
+    {
+        cc1101_packet_available = FALSE;                               //set flag that an package is corrupted
+    }
   }
   
-  attachPinChangeInterrupt(GDO2, rf_available_int, HIGH);
+  enableInterrupt(GDO2, rf_available_int, RISING); 
 }
