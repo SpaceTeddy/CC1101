@@ -18,7 +18,7 @@
 #define MISO_PIN 12
 #define MOSI_PIN 11
 #define SS_PIN   10
-#define GDO2      3                //2 main, 5 remote, 3 M16
+#define GDO2      3                     //2 main, 5 remote, 3 M16
 #define GDO0     99
 
 /*----------------------[CC1100 - misc]---------------------------------------*/
@@ -27,7 +27,7 @@
 #define FIFOBUFFER                0x42  //size of Fifo Buffer
 #define RSSI_OFFSET_868MHZ        0x4E  //dec = 74
 #define TX_RETRIES_MAX            0x05  //tx_retries_max
-#define ACK_TIMEOUT                250  //ACK timeout in ms
+#define ACK_TIMEOUT                200  //ACK timeout in ms
 #define CC1100_COMPARE_REGISTER   0x00  //register compare 0=no compare 1=compare
 #define BROADCAST_ADDRESS         0x00  //broadcast address
 #define CC1100_FREQ_315MHZ        0x01
@@ -183,8 +183,8 @@ class CC1100
         uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx,uint8_t &my_addr,
                                       uint8_t &sender, int8_t &rssi_dbm, uint8_t &lqi);
 
-        void tx_payload_burst(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer, uint8_t length);
-        void rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen);
+        uint8_t tx_payload_burst(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer, uint8_t length);
+        uint8_t rx_payload_burst(uint8_t rxbuffer[], uint8_t &pktlen);
 
         void rx_fifo_erase(uint8_t *rxbuffer);
         void tx_fifo_erase(uint8_t *txbuffer);
