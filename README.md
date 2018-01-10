@@ -102,8 +102,8 @@ you can set a frequency operation band by **void CC1100::set_ISM(uint8_t ism_fre
 Arduino specific
 ================
 
-CC1101 RF settings must be stored in the Arduino EEPROM to have maximum flexibility with different mode settings and reduced memomy usage.
-Follow the following steps, how to store the compiled EEPROM file (*.eep) to your Arduino EEPROM. From my experience, you have to repeat this step only, if you have changed the Arduino Version. 
+CC1101 RF settings must be stored in the Arduino EEPROM to have maximum flexibility with different mode settings and reduced memory usage.
+Follow the following steps, how to store the compiled EEPROM file (*.eep) to your Arduino EEPROM. From my experience, you have to repeat this step only, if you have changed the Arduino Version, because the gcc compiler defines the location of the eeprom settings.
 
 - compile the tx_demo or rx_demo example sketch
 - remember the path of your compiled output data (Arduino *.hex file and *.eep file)
