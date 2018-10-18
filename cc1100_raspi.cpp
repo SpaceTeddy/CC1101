@@ -404,7 +404,6 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
         if(debug_level > 0){
             printf("no CC11xx found!\r\n");
         }
-        end();                        //CC1100 Powerdown and disable SPI bus
         return FALSE;
     }
 
