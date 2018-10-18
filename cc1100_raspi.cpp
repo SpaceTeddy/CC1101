@@ -1071,7 +1071,7 @@ void CC1100::set_data_whitening(uint8_t cfg)
 //-------------------------------[end]-----------------------------------------
 
 //------------[set manchester encoding ON=TRUE; OFF=FALSE]---------------------
-void CC1100::set_manchaster_encoding(uint8_t cfg)
+void CC1100::set_manchester_encoding(uint8_t cfg)
 {
     uint8_t data;
     data = spi_read_register(MDMCFG2);
