@@ -178,7 +178,7 @@ class CC1100
         void show_main_settings(void);
 
         uint8_t packet_available();
-        uint8_t wait_for_packet(uint8_t milliseconds);
+        uint8_t wait_for_packet(uint16_t milliseconds);
 
         uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx,uint8_t &my_addr,
                                       uint8_t &sender, int8_t &rssi_dbm, uint8_t &lqi);
