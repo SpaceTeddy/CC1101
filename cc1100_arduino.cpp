@@ -398,7 +398,6 @@ uint8_t CC1100::begin(volatile uint8_t &My_addr)
                 Serial.print(F("no CC11xx found!"));
                 Serial.println();
             }
-            end();                        //CC1100 Powerdown and disable SPI bus
 
             return FALSE;
         }
