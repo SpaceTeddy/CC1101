@@ -5,8 +5,8 @@
 
 
 /*----------------------------------[standard]--------------------------------*/
-#define TRUE  1
-#define FALSE 0
+#define TRUE  (1==1)
+#define FALSE (!TRUE)
 
 
 //**************************** pins ******************************************//
@@ -171,7 +171,7 @@ class CC1100
         void show_main_settings(void);
 
         uint8_t packet_available();
-        uint8_t wait_for_packet(uint8_t milliseconds);
+        uint8_t wait_for_packet(uint16_t milliseconds);
 
         uint8_t get_payload(uint8_t rxbuffer[], uint8_t &pktlen_rx,uint8_t &my_addr,
                                       uint8_t &sender, int8_t &rssi_dbm, uint8_t &lqi);
@@ -183,9 +183,9 @@ class CC1100
         void tx_fifo_erase(uint8_t *txbuffer);
 
         uint8_t sent_packet(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer, uint8_t pktlen, uint8_t tx_retries);
-        void sent_acknolage(uint8_t my_addr, uint8_t tx_addr);
+        void sent_acknowledge(uint8_t my_addr, uint8_t tx_addr);
 
-        uint8_t check_acknolage(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr);
+        uint8_t check_acknowledge(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr);
 
         int8_t rssi_convert(uint8_t Rssi);
         uint8_t check_crc(uint8_t lqi);
@@ -202,7 +202,7 @@ class CC1100
         void set_data_whitening(uint8_t cfg);
         void set_modulation_type(uint8_t cfg);
         void set_preamble_len(uint8_t cfg);
-        void set_manchaster_encoding(uint8_t cfg);
+        void set_manchester_encoding(uint8_t cfg);
         void set_sync_mode(uint8_t cfg);
         void set_datarate(uint8_t mdmcfg4, uint8_t mdmcfg3, uint8_t deviant);
 };
