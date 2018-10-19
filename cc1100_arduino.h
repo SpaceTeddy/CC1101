@@ -209,7 +209,7 @@ class CC1100
         void set_data_whitening(uint8_t cfg);
         void set_modulation_type(uint8_t cfg);
         void set_preamble_len(uint8_t cfg);
-        void set_manchaster_encoding(uint8_t cfg);
+        void set_manchester_encoding(uint8_t cfg);
         void set_sync_mode(uint8_t cfg);
         void set_datarate(uint8_t mdmcfg4, uint8_t mdmcfg3, uint8_t deviant);
 
