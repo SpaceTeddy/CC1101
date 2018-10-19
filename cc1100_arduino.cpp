@@ -744,8 +744,8 @@ uint8_t CC1100::sent_packet(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer,
 }
 //-------------------------------[end]------------------------------------------
 
-//--------------------------[sent ACKNOLAGE]------------------------------------
-void CC1100::sent_acknolage(uint8_t my_addr, uint8_t tx_addr)
+//--------------------------[sent ACKNOWLEDGE]------------------------------------
+void CC1100::sent_acknowledge(uint8_t my_addr, uint8_t tx_addr)
 {
     uint8_t pktlen = 0x06;                                      //complete Pktlen for ACK packet
     uint8_t tx_buffer[0x06];                                    //tx buffer array init
@@ -839,7 +839,7 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
 
             if(my_addr != BROADCAST_ADDRESS)               //send only ack if no BROADCAST_ADDRESS
             {
-                sent_acknolage(my_addr, sender);           //sending acknolage to sender!
+                sent_acknowledge(my_addr, sender);           //sending acknowledge to sender!
             }
 
             return TRUE;
@@ -849,7 +849,7 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
 }
 //-------------------------------[end]------------------------------------------
 
-//-------------------------[check ACKNOLAGE]------------------------------------
+//-------------------------[check ACKNOWLEDGE]------------------------------------
 uint8_t CC1100::check_acknowledge(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr)
 {
     int8_t rssi_dbm;
@@ -858,9 +858,9 @@ uint8_t CC1100::check_acknowledge(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sen
     if((pktlen == 0x05 && \
        (rxbuffer[1] == my_addr || rxbuffer[1] == BROADCAST_ADDRESS)) && \
         rxbuffer[2] == sender && \
-        rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k') //acknolage received!
+        rxbuffer[3] == 'A' && rxbuffer[4] == 'c' && rxbuffer[5] == 'k') //acknowledge received!
         {
-            if(rxbuffer[1] == BROADCAST_ADDRESS){                           //if receiver address BROADCAST_ADDRESS skip acknolage
+            if(rxbuffer[1] == BROADCAST_ADDRESS){                           //if receiver address BROADCAST_ADDRESS skip acknowledge
                 if(debug_level > 0){
                     Serial.println(F("BROADCAST ACK"));
                 }
