@@ -885,9 +885,9 @@ uint8_t CC1100::check_acknowledge(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sen
 //-------------------------------[end]------------------------------------------
 
 //------------[check if Packet is received within defined time in ms]-----------
-uint8_t CC1100::wait_for_packet(uint8_t milliseconds)
+uint8_t CC1100::wait_for_packet(uint16_t milliseconds)
 {
-    for(uint8_t i = 0; i < milliseconds; i++)
+    for(uint16_t i = 0; i < milliseconds; i++)
         {
             delay(1);                 //delay till system has data available
             if (packet_available())
