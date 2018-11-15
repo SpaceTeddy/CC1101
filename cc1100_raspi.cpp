@@ -713,7 +713,7 @@ uint8_t CC1100::sent_packet(uint8_t my_addr, uint8_t rx_addr, uint8_t *txbuffer,
 }
 //-------------------------------[end]------------------------------------------
 
-//--------------------------[sent ACKNOLAGE]------------------------------------
+//--------------------------[sent ACKNOWLEDGE]------------------------------------
 void CC1100::sent_acknowledge(uint8_t my_addr, uint8_t tx_addr)
 {
     uint8_t pktlen = 0x06;                                      //complete Pktlen for ACK packet
@@ -816,7 +816,7 @@ uint8_t CC1100::get_payload(uint8_t rxbuffer[], uint8_t &pktlen, uint8_t &my_add
 }
 //-------------------------------[end]------------------------------------------
 
-//-------------------------[check ACKNOLAGE]------------------------------------
+//-------------------------[check ACKNOWLEDGE]------------------------------------
 uint8_t CC1100::check_acknowledge(uint8_t *rxbuffer, uint8_t pktlen, uint8_t sender, uint8_t my_addr)
 {
     int8_t rssi_dbm;

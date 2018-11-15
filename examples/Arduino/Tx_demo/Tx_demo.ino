@@ -3,13 +3,13 @@
 '                     -------
 '  - needs EnableInterrupt (former PinChangeInt) library
 '  - *.eep file must flashed to Arduino first -> use eeprom Tool
-'  - put cc1100_arduino.h in your sketch folder. dont't install it as library 
-'    for this example.
-'  
+'  - install cc1100_arduino.h and cc1100_arduino.cpp as a library (create subdirectory "cc1100"
+'    in your existing sketchbook/libraries directory and copy cc1100_arduino.* into the cc1100 
+'    directory)
 '  
 '-----------------------------------------------------------------------------*/
 #include <avr/sleep.h>
-#include <cc1100.h>
+#include <cc1100_arduino.h>
 #include <EnableInterrupt.h>
 
 //---------------------------=[Global variables]=----------------------------
