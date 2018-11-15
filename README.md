@@ -121,13 +121,13 @@ Follow the following steps, how to store the compiled EEPROM file (*.eep) to you
 - if your EEPROM data is written correct, you can compile and upload the RX_Demo or TX_Demo sketch to that hardware
 
 
-Rapsberry Pi
+Raspberry Pi
 ============
 
 How to compile Raspi Demo files
 -------------------------------
 
-be sure first, that you have already wireingPi installed on your Raspberry Pi hardware. 
+be sure first, that you have already wiringPi installed on your Raspberry Pi hardware. 
 
 copy RX_Demo.cpp, TX_Demo.cpp, cc1100_raspi.cpp, cc1100_raspi.h in the same directory and compile: <br />
 
