@@ -160,7 +160,7 @@ CC1100 SW [-h] [-V] [-a My_Addr] [-r RxDemo_Addr] [-i Msg_Interval] [-t tx_retri
   -t tx_retries [0-255] 	  	sets message send retries
   -c channel    [1-255] 		set transmit channel
   -f frequency  [315,434,868,915]  	set ISM band
-  -m modulation [100,250,500]           set modulation
+  -m modulation [1,38,100,250,500,4]	set modulation
   ```
   
   Example,<br />
@@ -177,7 +177,7 @@ CC1100 SW [-h] [-V] [-a My_Addr] [-r RxDemo_Addr] [-i Msg_Interval] [-t tx_retri
   -a my address [1-255] 		set my address
   -c channel    [1-255] 		set transmit channel
   -f frequency  [315,434,868,915]  	set ISM band
-  -m modulation [100,250,500]           set modulation
+  -m modulation [1,38,100,250,500,4]	set modulation
   ```
   
   Example,<br />
