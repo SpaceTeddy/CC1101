@@ -34,7 +34,7 @@
 #define CC1100_FREQ_434MHZ        0x02
 #define CC1100_FREQ_868MHZ        0x03
 #define CC1100_FREQ_915MHZ        0x04
-//#define CC1100_FREQ_2430MHZ       0x05
+#define CC1100_FREQ_2430MHZ       0x05
 #define CC1100_TEMP_ADC_MV        3.225 //3.3V/1023 . mV pro digit
 #define CC1100_TEMP_CELS_CO       2.47  //Temperature coefficient 2.47mV per Grad Celsius
 
